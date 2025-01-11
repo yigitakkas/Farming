@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
     private bool _isGrounded;
     private float _currentSpeed;
     
-    // Animator parameter hashes for better performance
+    // Animator hashes
     private static readonly int IsWalking = Animator.StringToHash("IsWalking");
     private static readonly int IsRunning = Animator.StringToHash("IsRunning");
     private static readonly int Jump = Animator.StringToHash("Jump");
@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
         
         if (_isGrounded && _velocity.y < 0)
         {
-            _velocity.y = -2f;  // Small downward force when grounded
+            _velocity.y = -2f;
         }
     }
     
