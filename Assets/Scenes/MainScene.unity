@@ -529,14 +529,15 @@ MonoBehaviour:
   MoveSpeed: 5
   SprintSpeed: 7
   RotationSpeed: 10
-  JumpForce: 2
+  JumpForce: 1.5
   Gravity: -9.81
   GroundCheck: {fileID: 1725677882}
   GroundDistance: 0.1
   GroundMask:
     serializedVersion: 2
     m_Bits: 128
-  Animator: {fileID: 0}
+  Animator: {fileID: 4706439663741594846}
+  ModelTransform: {fileID: 4615167441160920356}
 --- !u!143 &1653526429
 CharacterController:
   m_ObjectHideFlags: 0
@@ -2947,10 +2948,10 @@ Animator:
   m_GameObject: {fileID: 4613414166110662316}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 0125309e38bea8a48bc578cf8f220634, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
+  m_Controller: {fileID: 9100000, guid: 2796a08e9ded04943845e7f2402783be, type: 2}
+  m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
