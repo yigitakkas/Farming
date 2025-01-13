@@ -1,0 +1,233 @@
+using UnityEngine;
+
+public class FarmingTool : Tool
+{
+    [Header("Planting Settings")]
+    public GameObject CropPrefab;
+    public LayerMask PlantingLayer;
+    public float PlantingHeight = 0f;
+    
+    [Header("Harvesting Settings")]
+    public LayerMask CropLayer;
+    public float HarvestRange = 25f;
+    
+    [Header("Visual Feedback")]
+    public GameObject PlantingPreview;
+    public GameObject HarvestPreview;
+    private GameObject _currentPreview;
+    private GameObject _harvestPreview;
+    private bool _canPlantHere;
+    private Transform _groundCheck;
+    
+    private void Start()
+    {
+        var player = GameObject.FindGameObjectWithTag("Player");
+        var playerController = player.GetComponent<PlayerController>();
+        if (playerController != null)
+        {
+            _groundCheck = playerController.GroundCheck;
+        }
+        
+        if (PlantingPreview != null)
+        {
+            _currentPreview = Instantiate(PlantingPreview);
+            _currentPreview.SetActive(false);
+            
+            // Put preview on a different layer
+            _currentPreview.layer = LayerMask.NameToLayer("Ignore Raycast");
+            
+            // Set layer for all children too
+            foreach (Transform child in _currentPreview.transform)
+            {
+                child.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+            }
+        }
+        
+        if (HarvestPreview != null)
+        {
+            _harvestPreview = Instantiate(HarvestPreview);
+            _harvestPreview.SetActive(false);
+            
+            // Put on ignore raycast layer
+            _harvestPreview.layer = LayerMask.NameToLayer("Ignore Raycast");
+            foreach (Transform child in _harvestPreview.transform)
+            {
+                child.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+            }
+        }
+    }
+    
+    private void Update()
+    {
+        base.Update();
+        
+        // First check for harvestable crops
+        bool showingHarvestPreview = UpdateHarvestPreview();
+        
+        // Only show planting preview if we're not showing harvest preview
+        if (!showingHarvestPreview)
+        {
+            UpdatePlantingPreview();
+        }
+        else if (_currentPreview != null)
+        {
+            _currentPreview.SetActive(false);
+        }
+    }
+    
+    private void UpdatePlantingPreview()
+    {
+        if (_currentPreview == null || _groundCheck == null) return;
+        
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit[] hits = Physics.RaycastAll(ray, 100f);
+        
+        foreach (var hit in hits)
+        {
+            if (((1 << hit.collider.gameObject.layer) & PlantingLayer) != 0)
+            {
+                Vector3 feetPosition = _groundCheck.position;
+                float distanceXZ = Vector3.Distance(
+                    new Vector3(feetPosition.x, 0, feetPosition.z),
+                    new Vector3(hit.point.x, 0, hit.point.z)
+                );
+                
+                if (distanceXZ <= UseRange)
+                {
+                    _canPlantHere = true;
+                    _currentPreview.SetActive(true);
+                    _currentPreview.transform.position = hit.point + Vector3.up * PlantingHeight;
+                    
+                    if (_currentPreview.TryGetComponent<Renderer>(out var renderer))
+                    {
+                        renderer.material.color = _canUse ? Color.green : Color.red;
+                    }
+                    return;
+                }
+            }
+        }
+        
+        _canPlantHere = false;
+        _currentPreview.SetActive(false);
+    }
+    
+    private bool UpdateHarvestPreview()
+    {
+        if (_harvestPreview == null) return false;
+        
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, CropLayer))
+        {
+            Vector3 feetPosition = _groundCheck.position;
+            float distanceXZ = Vector3.Distance(
+                new Vector3(feetPosition.x, 0, feetPosition.z),
+                new Vector3(hit.point.x, 0, hit.point.z)
+            );
+            
+            Crop crop = hit.collider.GetComponent<Crop>();
+            if (crop != null && crop.IsReadyToHarvest() && distanceXZ <= HarvestRange)
+            {
+                _harvestPreview.SetActive(true);
+                _harvestPreview.transform.position = hit.point + Vector3.up * 0.1f;
+                
+                if (_harvestPreview.TryGetComponent<Renderer>(out var renderer))
+                {
+                    renderer.material.color = _canUse ? Color.yellow : Color.red;
+                }
+                return true;
+            }
+        }
+        
+        _harvestPreview.SetActive(false);
+        return false;
+    }
+    
+    public override void UseTool(Vector3 usePosition)
+    {
+        if (!_canUse) return;
+        
+        // Right click for harvesting
+        if (Input.GetMouseButton(1))
+        {
+            HandleHarvesting(usePosition);
+        }
+        // Left click for planting
+        else if (_canPlantHere && _currentPreview != null && _currentPreview.activeSelf)
+        {
+            HandlePlanting();
+        }
+    }
+    
+    private void HandlePlanting()
+    {
+        Vector3 plantPosition = _currentPreview.transform.position;
+        GameObject newCrop = Instantiate(CropPrefab, plantPosition, Quaternion.identity);
+        
+        _canUse = false;
+        _useTimer = 0;
+    }
+    
+    private void HandleHarvesting(Vector3 usePosition)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        
+        if (Physics.Raycast(ray, out RaycastHit cropHit, 100f, CropLayer))
+        {
+            // Check XZ distance
+            Vector3 feetPosition = _groundCheck.position;
+            float distanceXZ = Vector3.Distance(
+                new Vector3(feetPosition.x, 0, feetPosition.z),
+                new Vector3(cropHit.point.x, 0, cropHit.point.z)
+            );
+            
+            if (distanceXZ <= HarvestRange)
+            {
+                Crop crop = cropHit.collider.GetComponent<Crop>();
+                if (crop != null)
+                {
+                    crop.Harvest();
+                    _canUse = false;
+                    _useTimer = 0;
+                }
+            }
+        }
+    }
+    
+    public override void OnEquip()
+    {
+        base.OnEquip();
+        if (_currentPreview != null)
+        {
+            _currentPreview.SetActive(true);
+        }
+        if (_harvestPreview != null)
+        {
+            _harvestPreview.SetActive(false);  // Start with it hidden
+        }
+    }
+    
+    public override void OnUnequip()
+    {
+        base.OnUnequip();
+        if (_currentPreview != null)
+        {
+            _currentPreview.SetActive(false);
+        }
+        if (_harvestPreview != null)
+        {
+            _harvestPreview.SetActive(false);
+        }
+    }
+    
+    private void OnDestroy()
+    {
+        if (_currentPreview != null)
+        {
+            Destroy(_currentPreview);
+        }
+        if (_harvestPreview != null)
+        {
+            Destroy(_harvestPreview);
+        }
+    }
+} 

@@ -492,7 +492,6 @@ Transform:
   m_Children:
   - {fileID: 963194228}
   - {fileID: 1725677882}
-  - {fileID: 1669489929}
   - {fileID: 4615167441160920356}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -512,9 +511,12 @@ MonoBehaviour:
   InteractionLayer:
     serializedVersion: 2
     m_Bits: 256
-  ToolHolder: {fileID: 1669489929}
+  ToolHolder: {fileID: 4615289078022764934}
   ToolPrefabs:
-  - {fileID: 2305325346606390186, guid: 935f3879de219044ba5f3245c11ee243, type: 3}
+  - {fileID: 2305325346606390186, guid: ad931eeb64d20504fbe536564e9f9790, type: 3}
+  - {fileID: 2305325346606390186, guid: 8a17f1c86f985d344af7efe99eb42ea8, type: 3}
+  ToolOffset: {x: 0, y: 0, z: 0}
+  ToolRotation: {x: 45, y: 90, z: 30}
   CurrentTool: {fileID: 0}
 --- !u!114 &1653526428
 MonoBehaviour:
@@ -566,37 +568,6 @@ CharacterController:
   m_SkinWidth: 0.05
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
---- !u!1 &1669489928
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1669489929}
-  m_Layer: 0
-  m_Name: Tool Holder
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1669489929
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1669489928}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.861, y: 1.332, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1653526426}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1725677881
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,6 +9,9 @@ public class PlayerInteraction : MonoBehaviour
     [Header("Tool Settings")]
     public Transform ToolHolder;
     public GameObject[] ToolPrefabs;
+    [Header("Tool Position")]
+    public Vector3 ToolOffset = Vector3.zero;
+    public Vector3 ToolRotation = Vector3.zero;
     private Tool[] _instantiatedTools;
     public Tool CurrentTool;
     private int _currentToolIndex = -1;
@@ -20,20 +23,9 @@ public class PlayerInteraction : MonoBehaviour
     private void Start()
     {
         _mainCamera = Camera.main;
+        ToolHolder.localPosition += ToolOffset;
+        ToolHolder.localRotation *= Quaternion.Euler(ToolRotation);
         InstantiateTools();
-    }
-    
-    // Creates instances of all tool prefabs
-    private void InstantiateTools()
-    {
-        _instantiatedTools = new Tool[ToolPrefabs.Length];
-        
-        for (int i = 0; i < ToolPrefabs.Length; i++)
-        {
-            GameObject toolObj = Instantiate(ToolPrefabs[i], ToolHolder.position, ToolHolder.rotation, ToolHolder);
-            _instantiatedTools[i] = toolObj.GetComponent<Tool>();
-            toolObj.SetActive(false);
-        }
     }
     
     private void Update()
@@ -43,9 +35,27 @@ public class PlayerInteraction : MonoBehaviour
         HandleInteraction();
     }
     
+    // Creates instances of all tool prefabs
+    private void InstantiateTools()
+    {
+        _instantiatedTools = new Tool[ToolPrefabs.Length];
+        for (int i = 0; i < ToolPrefabs.Length; i++)
+        {
+            GameObject toolObj = Instantiate(ToolPrefabs[i], ToolHolder.position, ToolHolder.rotation, ToolHolder);
+            _instantiatedTools[i] = toolObj.GetComponent<Tool>();
+            toolObj.SetActive(false);
+        }
+    }
+    
     // Handles number key input for tool selection
     private void HandleToolSelection()
     {
+        if (CurrentTool != null && Input.GetKeyDown(KeyCode.Alpha1 + _currentToolIndex))
+        {
+            EquipTool(-1);
+            return;
+        }
+
         for (int i = 0; i < _instantiatedTools.Length && i < 9; i++)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1 + i))
@@ -58,22 +68,49 @@ public class PlayerInteraction : MonoBehaviour
     // Processes tool usage when clicking
     private void HandleToolUse()
     {
-        if (CurrentTool != null && Input.GetMouseButtonDown(0))
+        if (CurrentTool != null)
         {
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
             
-            if (CurrentTool is PlantingTool plantingTool)
+            if (CurrentTool is FarmingTool farmingTool)
             {
-                RaycastHit[] hits = Physics.RaycastAll(ray, 100f);
-                
-                foreach (var hit in hits)
+                // Left click for planting
+                if (Input.GetMouseButtonDown(0))
                 {
-                    bool isOnFarmland = ((1 << hit.collider.gameObject.layer) & plantingTool.PlantingLayer.value) != 0;
-                    
-                    if (isOnFarmland)
+                    RaycastHit[] hits = Physics.RaycastAll(ray, 100f);
+                    foreach (var hit in hits)
                     {
-                        CurrentTool.UseTool(hit.point);
-                        return;
+                        bool isOnFarmland = ((1 << hit.collider.gameObject.layer) & farmingTool.PlantingLayer.value) != 0;
+                        if (isOnFarmland)
+                        {
+                            CurrentTool.UseTool(hit.point);
+                            return;
+                        }
+                    }
+                }
+                // Right click for harvesting
+                else if (Input.GetMouseButtonDown(1))
+                {
+                    RaycastHit[] hitsRightClick = Physics.RaycastAll(ray, 100f);
+                    
+                    foreach (var hit in hitsRightClick)
+                    {
+                        bool isOnCropLayer = ((1 << hit.collider.gameObject.layer) & farmingTool.CropLayer.value) != 0;
+                        
+                        if (isOnCropLayer)
+                        {
+                            Vector3 playerPosition = _mainCamera.transform.position;
+                            float distanceXZ = Vector3.Distance(
+                                new Vector3(playerPosition.x, 0, playerPosition.z),
+                                new Vector3(hit.point.x, 0, hit.point.z)
+                            );
+                            
+                            if (distanceXZ <= farmingTool.HarvestRange)
+                            {
+                                CurrentTool.UseTool(hit.point);
+                                return;
+                            }
+                        }
                     }
                 }
             }
@@ -110,28 +147,14 @@ public class PlayerInteraction : MonoBehaviour
         if (CurrentTool == null && Input.GetMouseButtonDown(0))
         {
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            
-            if (Physics.Raycast(ray, out hit, InteractionRange, InteractionLayer))
+            if (Physics.Raycast(ray, out RaycastHit hit, InteractionRange, InteractionLayer))
             {
                 IInteractable interactable = hit.collider.GetComponent<IInteractable>();
                 if (interactable != null)
                 {
                     interactable.Interact(this);
                 }
-                
-                Crop crop = hit.collider.GetComponent<Crop>();
-                if (crop != null && crop.IsReadyToHarvest())
-                {
-                    StartHarvesting(crop);
-                }
             }
         }
-    }
-    
-    // Initiates the harvesting process for a crop
-    private void StartHarvesting(Crop crop)
-    {
-        crop.Harvest();
     }
 } 

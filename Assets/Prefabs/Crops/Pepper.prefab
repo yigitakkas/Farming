@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2315750074111725354}
   - component: {fileID: 8967569207658946384}
-  m_Layer: 0
+  - component: {fileID: 2882826463049583422}
+  m_Layer: 10
   m_Name: Pepper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57,3 +58,24 @@ MonoBehaviour:
   CurrentGrowthTime: 12
   CurrentStage: 0
   IsWatered: 0
+--- !u!65 &2882826463049583422
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3374254361268094036}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.8735461, y: 0.48092473, z: 1}
+  m_Center: {x: -0.012012243, y: 0.32987338, z: 0}

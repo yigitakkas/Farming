@@ -56,6 +56,17 @@ public class Crop : MonoBehaviour, IInteractable
         }
         
         UpdateVisuals();
+        
+        // Make sure crop is on the Crops layer
+        gameObject.layer = LayerMask.NameToLayer("Crops");
+        
+        // Set the layer for all child objects too
+        foreach (Transform child in transform)
+        {
+            child.gameObject.layer = LayerMask.NameToLayer("Crops");
+        }
+        
+        Debug.Log($"Crop {gameObject.name} on layer: {gameObject.layer}, layerName: {LayerMask.LayerToName(gameObject.layer)}");
     }
     
     private void Update()
@@ -82,7 +93,9 @@ public class Crop : MonoBehaviour, IInteractable
     
     public bool IsReadyToHarvest()
     {
-        return IsFullyGrown;
+        // Add debug log
+        Debug.Log($"Checking if {gameObject.name} is ready to harvest");
+        return true; // Temporarily return true for testing
     }
     
     public void Harvest()
