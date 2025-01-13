@@ -93,9 +93,9 @@ public class Crop : MonoBehaviour, IInteractable
     
     public bool IsReadyToHarvest()
     {
-        // Add debug log
-        Debug.Log($"Checking if {gameObject.name} is ready to harvest");
-        return true; // Temporarily return true for testing
+        // Check if the crop is fully grown
+        bool isReady = IsFullyGrown;
+        return isReady;
     }
     
     public void Harvest()
