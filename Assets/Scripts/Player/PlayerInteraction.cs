@@ -20,6 +20,8 @@ public class PlayerInteraction : MonoBehaviour
     private bool _isInteracting;
     private float _interactionTimer;
     
+    public int CurrentToolIndex => _currentToolIndex;
+    
     private void Start()
     {
         _mainCamera = Camera.main;
@@ -50,17 +52,27 @@ public class PlayerInteraction : MonoBehaviour
     // Handles number key input for tool selection
     private void HandleToolSelection()
     {
-        if (CurrentTool != null && Input.GetKeyDown(KeyCode.Alpha1 + _currentToolIndex))
+        // Unequip with same number key or when selecting an empty slot
+        if ((CurrentTool != null && Input.GetKeyDown(KeyCode.Alpha1 + _currentToolIndex)) ||
+            (Input.GetKeyDown(KeyCode.Alpha1 + _currentToolIndex) && _currentToolIndex >= _instantiatedTools.Length))
         {
             EquipTool(-1);
             return;
         }
 
-        for (int i = 0; i < _instantiatedTools.Length && i < 9; i++)
+        for (int i = 0; i < GameConstants.MAX_HOTBAR_SLOTS; i++)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1 + i))
             {
-                EquipTool(i);
+                // If trying to select a slot beyond our tools, unequip
+                if (i >= _instantiatedTools.Length)
+                {
+                    EquipTool(-1);
+                }
+                else
+                {
+                    EquipTool(i);
+                }
             }
         }
     }

@@ -8,7 +8,6 @@ public class IconGenerator : MonoBehaviour
     public Color BackgroundColor = Color.clear;
     
     [Header("Model Settings")]
-    public Vector3 ModelRotation = new Vector3(0, -45f, 0);
     public float CameraDistance = 2f;
     public float ModelScale = 1f;
     
@@ -25,7 +24,7 @@ public class IconGenerator : MonoBehaviour
         
         // Instantiate model
         GameObject temp = Instantiate(prefab);
-        temp.transform.rotation = Quaternion.Euler(ModelRotation);
+        temp.transform.rotation = Quaternion.identity;
         temp.transform.localScale = Vector3.one * ModelScale;
         
         // Position camera and model

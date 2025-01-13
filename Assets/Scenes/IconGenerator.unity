@@ -155,11 +155,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IconGenerator: {fileID: 999706920}
   Prefabs:
-  - ModelPrefab: {fileID: 1636851566603426, guid: 29f26d2a30243e14e9c8922118fd5a01, type: 3}
-  - ModelPrefab: {fileID: 1635757618814564, guid: 435c0173f537ec94a883d3eb4e63c64f, type: 3}
-  - ModelPrefab: {fileID: 1283656564134846, guid: 6ee35a693f88cd0478a6a5b5cee34bde, type: 3}
-  - ModelPrefab: {fileID: 1624448036981844, guid: f4089018a66c44b409826493af499043, type: 3}
-  - ModelPrefab: {fileID: 1354653459277976, guid: 16b7c7ffe5607c04ca05aac84b32bf81, type: 3}
+  - ModelPrefab: {fileID: 2305325346606390186, guid: 8a17f1c86f985d344af7efe99eb42ea8, type: 3}
+  - ModelPrefab: {fileID: 2305325346606390186, guid: ad931eeb64d20504fbe536564e9f9790, type: 3}
 --- !u!114 &999706920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,7 +172,6 @@ MonoBehaviour:
   RenderCamera: {fileID: 1177024569}
   Resolution: 512
   BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
-  ModelRotation: {x: 0, y: -45, z: 0}
   CameraDistance: 2
   ModelScale: 1
 --- !u!4 &999706921
@@ -372,7 +368,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1177024567}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
