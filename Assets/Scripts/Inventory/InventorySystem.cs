@@ -10,6 +10,7 @@ public class InventorySystem : MonoBehaviour
     public List<InventoryItem> Items = new List<InventoryItem>();
     
     public event Action OnInventoryChanged;
+    public event Action<InventoryItem> OnItemAdded;
     
     private void Awake()
     {
@@ -33,6 +34,7 @@ public class InventorySystem : MonoBehaviour
         {
             existingItem.Quantity += newItem.Quantity;
             OnInventoryChanged?.Invoke();
+            OnItemAdded?.Invoke(newItem);
             return true;
         }
         
@@ -41,6 +43,7 @@ public class InventorySystem : MonoBehaviour
         {
             Items.Add(newItem);
             OnInventoryChanged?.Invoke();
+            OnItemAdded?.Invoke(newItem);
             return true;
         }
         

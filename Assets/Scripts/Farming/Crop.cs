@@ -71,16 +71,20 @@ public class Crop : MonoBehaviour, IInteractable
     
     private void Update()
     {
-        if (!IsFullyGrown && IsWatered)
+        if (!GameManager.Instance.IsGamePaused && IsWatered)
         {
-            // Progress growth based on game time
-            CurrentGrowthTime += Time.deltaTime / (GameManager.Instance.DayLength * 60);
+            float growthProgress = Time.deltaTime / TimeManager.Instance.RealSecondsPerDay;
+            CurrentGrowthTime += growthProgress;
             
-            // Check if we should advance to next stage
             if (CurrentGrowthTime >= TimePerStage)
             {
                 CurrentGrowthTime = 0;
                 CurrentStage++;
+                UpdateVisuals();
+            }
+            else
+            {
+                float growthPercent = CurrentGrowthTime / TimePerStage;
                 UpdateVisuals();
             }
         }
