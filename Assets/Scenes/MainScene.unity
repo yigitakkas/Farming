@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.34226382, g: 0.35955212, b: 0.35689607, a: 1}
+  m_IndirectSpecularColor: {r: 0.44128355, g: 0.44061807, b: 0.44412294, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1586,7 +1586,7 @@ MonoBehaviour:
   _directionalLight: {fileID: 705507994}
   _skyboxColor:
     serializedVersion: 2
-    key0: {r: 0.5803922, g: 0.6, b: 0.29803923, a: 1}
+    key0: {r: 1, g: 0.76862746, b: 0.47843137, a: 1}
     key1: {r: 0.16352195, g: 0.16352195, b: 0.16352195, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
@@ -1594,7 +1594,7 @@ MonoBehaviour:
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 32768
+    ctime0: 33023
     ctime1: 65535
     ctime2: 0
     ctime3: 0
@@ -2012,8 +2012,8 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 0.49851128, g: 0.509434, b: 0.3412246, a: 1}
-  m_Intensity: 1
+  m_Color: {r: 1, g: 0.76957405, b: 0.47794116, a: 1}
+  m_Intensity: 1.1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -2022,9 +2022,9 @@ Light:
     m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 0.15
-    m_Bias: 0.05
-    m_NormalBias: 0.4
+    m_Strength: 1
+    m_Bias: 0.192
+    m_NormalBias: 0
     m_NearPlane: 0.2
     m_CullingMatrixOverride:
       e00: 1
@@ -2052,7 +2052,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 2
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -2869,6 +2869,8 @@ MonoBehaviour:
   _inventoryPanel: {fileID: 1269904714}
   _itemsContainer: {fileID: 1693923995}
   _itemSlotPrefab: {fileID: 1823426548613761602, guid: 10aa55be3c480834691716bce245325d, type: 3}
+  _selectedColor: {r: 0.7, g: 1, b: 0.7, a: 1}
+  _normalColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &1113112345
 Transform:
   m_ObjectHideFlags: 0
@@ -2896,7 +2898,7 @@ GameObject:
   - component: {fileID: 1131945734}
   - component: {fileID: 1131945733}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: InventoryText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4753,6 +4755,81 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1653526426}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1840316116
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1840316118}
+  - component: {fileID: 1840316117}
+  m_Layer: 0
+  m_Name: CropManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1840316117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1840316116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0db7a8e48cd70a04abd37031f3f5c373, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cropDatabase:
+  - CropId: broccoli
+    CropName: Broccoli
+    CropPrefab: {fileID: 3642208961210463046, guid: d1bcfb6ae548ffe499a8e77d976827fd, type: 3}
+    CropIcon: {fileID: 21300000, guid: fdb6ffa311895cd48b3e2a4e93b9ff30, type: 3}
+    SeedIcon: {fileID: 21300000, guid: fdb6ffa311895cd48b3e2a4e93b9ff30, type: 3}
+    BaseValue: 10
+    SeedValue: 5
+    GrowthStages: 3
+    TimePerStage: 0.5
+    WaterConsumptionPerDay: 0.2
+  - CropId: carrot
+    CropName: Carrot
+    CropPrefab: {fileID: 3291801832686062121, guid: 277d4609958b7164791d29bb144cbe3b, type: 3}
+    CropIcon: {fileID: 21300000, guid: bfecd2c936aa15641b12882528607e65, type: 3}
+    SeedIcon: {fileID: 21300000, guid: bfecd2c936aa15641b12882528607e65, type: 3}
+    BaseValue: 5
+    SeedValue: 3
+    GrowthStages: 3
+    TimePerStage: 0.5
+    WaterConsumptionPerDay: 0.2
+  - CropId: pepper
+    CropName: Pepper
+    CropPrefab: {fileID: 3374254361268094036, guid: 117460af0b4b5e444ab9772796dd972e, type: 3}
+    CropIcon: {fileID: 21300000, guid: fd7e208f8b8fb344d98de85188cc89e3, type: 3}
+    SeedIcon: {fileID: 21300000, guid: fd7e208f8b8fb344d98de85188cc89e3, type: 3}
+    BaseValue: 10
+    SeedValue: 4
+    GrowthStages: 3
+    TimePerStage: 0.75
+    WaterConsumptionPerDay: 0.3
+--- !u!4 &1840316118
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1840316116}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1845856584
 GameObject:
@@ -9761,3 +9838,4 @@ SceneRoots:
   - {fileID: 1658783149}
   - {fileID: 524343238}
   - {fileID: 1845856586}
+  - {fileID: 1840316118}

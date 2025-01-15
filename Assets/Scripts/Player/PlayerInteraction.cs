@@ -123,7 +123,7 @@ public class PlayerInteraction : MonoBehaviour
                                 new Vector3(hit.point.x, 0, hit.point.z)
                             );
                             
-                            if (distanceXZ <= farmingTool.HarvestRange)
+                            if (distanceXZ <= farmingTool.UseRange)
                             {
                                 CurrentTool.UseTool(hit.point);
                                 return;

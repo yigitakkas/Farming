@@ -51,15 +51,14 @@ MonoBehaviour:
   UseRange: 2
   UseDelay: 0.2
   ToolIcon: {fileID: 21300000, guid: 16926bc5f7cfd244a8f12affac9dea58, type: 3}
-  CropPrefab: {fileID: 3642208961210463046, guid: d1bcfb6ae548ffe499a8e77d976827fd, type: 3}
+  ToolType: 0
   PlantingLayer:
     serializedVersion: 2
     m_Bits: 512
-  PlantingHeight: 0.01
   CropLayer:
     serializedVersion: 2
     m_Bits: 1024
-  HarvestRange: 2
+  PlantingHeight: 0.01
   PlantingPreview: {fileID: 698805585394074085, guid: 7f992d6e209f0a342a9a5cb4786b0d5c, type: 3}
   HarvestPreview: {fileID: 5862352020556860747, guid: 77f9e806582d4234bbf28f5b62ef1323, type: 3}
 --- !u!1001 &6233598282811451247

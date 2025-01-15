@@ -4,24 +4,67 @@ using System;
 public class Crop : MonoBehaviour, IInteractable
 {
     [Header("Crop Settings")]
-    public string CropId;
-    public string CropName;
-    public int GrowthStages = 3;
-    public float TimePerStage = 0.5f;
-    public float WaterConsumptionPerDay = 0.2f;
-    public float BaseValue = 10f;
+    private string _cropId;
+    private string _cropName;
+    private float _baseValue;
+    private int _growthStages;
+    private float _timePerStage;
+    private float _waterConsumptionPerDay;
+    
+    public void InitializeFromData(CropData data)
+    {
+        _cropId = data.CropId;
+        _cropName = data.CropName;
+        _baseValue = data.BaseValue;
+        _growthStages = data.GrowthStages;
+        _timePerStage = data.TimePerStage;
+        _waterConsumptionPerDay = data.WaterConsumptionPerDay;
+        
+        // Reset growth state
+        CurrentStage = 0;
+        CurrentGrowthTime = 0;
+        IsWatered = true;
+        
+        // Initialize models
+        InitializeModels();
+        UpdateVisuals();
+    }
+    
+    private void InitializeModels()
+    {
+        // Instantiate models as children
+        if (SmallModelPrefab) 
+            _smallModel = Instantiate(SmallModelPrefab, transform.position, transform.rotation, transform);
+        
+        if (MediumModelPrefab)
+            _mediumModel = Instantiate(MediumModelPrefab, transform.position, transform.rotation, transform);
+        
+        if (LargeModelPrefab)
+            _largeModel = Instantiate(LargeModelPrefab, transform.position, transform.rotation, transform);
+            
+        // Set layers
+        SetCropLayers();
+    }
+    
+    private void SetCropLayers()
+    {
+        gameObject.layer = LayerMask.NameToLayer("Crops");
+        foreach (Transform child in transform)
+        {
+            child.gameObject.layer = LayerMask.NameToLayer("Crops");
+        }
+    }
     
     [Header("Visual References")]
     public GameObject SmallModelPrefab;
     public GameObject MediumModelPrefab;
     public GameObject LargeModelPrefab;
-    public Sprite CropIcon;
     
     [Header("Current State")]
     [SerializeField] private float CurrentGrowthTime;
     [SerializeField] private int CurrentStage;
     public bool IsWatered;
-    public bool IsFullyGrown => CurrentStage >= GrowthStages - 1;
+    public bool IsFullyGrown => CurrentStage >= _growthStages - 1;
     
     // References to instantiated models
     private GameObject _smallModel;
@@ -32,19 +75,13 @@ public class Crop : MonoBehaviour, IInteractable
     
     private void Awake()
     {
-        CurrentStage = 0;
-        CurrentGrowthTime = 0;
-        IsWatered = true;
-        
-        // Instantiate models as children
-        if (SmallModelPrefab) 
-            _smallModel = Instantiate(SmallModelPrefab, transform.position, transform.rotation, transform);
-        
-        if (MediumModelPrefab)
-            _mediumModel = Instantiate(MediumModelPrefab, transform.position, transform.rotation, transform);
-        
-        if (LargeModelPrefab)
-            _largeModel = Instantiate(LargeModelPrefab, transform.position, transform.rotation, transform);
+        // Only set initial values if not initialized through InitializeFromData
+        if (string.IsNullOrEmpty(_cropId))
+        {
+            CurrentStage = 0;
+            CurrentGrowthTime = 0;
+            IsWatered = true;
+        }
     }
     
     private void Start()
@@ -75,20 +112,33 @@ public class Crop : MonoBehaviour, IInteractable
         {
             float growthProgress = Time.deltaTime / TimeManager.Instance.RealSecondsPerDay;
             CurrentGrowthTime += growthProgress;
-            
-            if (CurrentGrowthTime >= TimePerStage)
+
+            if (CurrentGrowthTime >= _timePerStage)
             {
                 CurrentGrowthTime = 0;
                 CurrentStage++;
+
+                if (CurrentStage >= _growthStages)
+                {
+                    CurrentStage = _growthStages - 1;
+                }
+
                 UpdateVisuals();
             }
             else
             {
-                float growthPercent = CurrentGrowthTime / TimePerStage;
+                float growthPercent = CurrentGrowthTime / _timePerStage;
                 UpdateVisuals();
+            }
+
+            if (IsWatered)
+            {
+                float waterUsed = _waterConsumptionPerDay * (Time.deltaTime / TimeManager.Instance.RealSecondsPerDay);
+                // Use waterUsed for mechanics like needing to re-water plants
             }
         }
     }
+
     
     public void Water()
     {
@@ -106,16 +156,14 @@ public class Crop : MonoBehaviour, IInteractable
     {
         if (IsReadyToHarvest())
         {
-            // Create inventory item with icon
             InventoryItem harvestedCrop = new InventoryItem(
-                CropId,
-                CropName,
+                _cropId,
+                _cropName,
                 InventoryItem.ItemType.Crop,
-                CropIcon,
-                BaseValue
+                CropManager.Instance.GetCropIcon(_cropId),
+                _baseValue
             );
             
-            // Add to inventory
             if (InventorySystem.Instance.AddItem(harvestedCrop))
             {
                 OnCropHarvested?.Invoke(this);

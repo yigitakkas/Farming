@@ -2,14 +2,20 @@ using UnityEngine;
 
 public class FarmingTool : Tool
 {
-    [Header("Planting Settings")]
-    public GameObject CropPrefab;
-    public LayerMask PlantingLayer;
-    public float PlantingHeight = 0f;
+    [Header("Tool Type")]
+    public FarmingToolType ToolType;
     
-    [Header("Harvesting Settings")]
+    public enum FarmingToolType
+    {
+        Spade,      // For planting
+        Watering,   // For watering
+        Scythe      // For harvesting
+    }
+    
+    [Header("Interaction Settings")]
+    public LayerMask PlantingLayer;
     public LayerMask CropLayer;
-    public float HarvestRange = 25f;
+    public float PlantingHeight = 0f;
     
     [Header("Visual Feedback")]
     public GameObject PlantingPreview;
@@ -125,7 +131,7 @@ public class FarmingTool : Tool
             );
             
             Crop crop = hit.collider.GetComponent<Crop>();
-            if (crop != null && crop.IsReadyToHarvest() && distanceXZ <= HarvestRange)
+            if (crop != null && crop.IsReadyToHarvest() && distanceXZ <= UseRange)
             {
                 _harvestPreview.SetActive(true);
                 _harvestPreview.transform.position = hit.point + Vector3.up * 0.1f;
@@ -146,22 +152,45 @@ public class FarmingTool : Tool
     {
         if (!_canUse) return;
         
-        // Right click for harvesting
-        if (Input.GetMouseButton(1))
+        switch (ToolType)
         {
-            HandleHarvesting(usePosition);
-        }
-        // Left click for planting
-        else if (_canPlantHere && _currentPreview != null && _currentPreview.activeSelf)
-        {
-            HandlePlanting();
+            case FarmingToolType.Spade:
+                HandlePlanting();
+                break;
+            case FarmingToolType.Scythe:
+                HandleHarvesting(usePosition);
+                break;
+            // Add other tool types...
         }
     }
     
     private void HandlePlanting()
     {
+        if (!_canPlantHere || !_currentPreview.activeSelf) return;
+        
+        // Get selected seed from inventory
+        InventoryItem selectedSeed = InventorySystem.Instance.GetSelectedSeed();
+        if (selectedSeed == null || selectedSeed.Type != InventoryItem.ItemType.Seed) return;
+        
+        // Get crop prefab and data from seed ID
+        string cropId = selectedSeed.ItemId.Replace("_seed", "");
+        GameObject cropPrefab = CropManager.Instance.GetCropPrefab(selectedSeed.ItemId);
+        CropData cropData = CropManager.Instance.GetCropData(cropId);
+        
+        if (cropPrefab == null || cropData == null) return;
+        
+        // Plant the crop and initialize it
         Vector3 plantPosition = _currentPreview.transform.position;
-        GameObject newCrop = Instantiate(CropPrefab, plantPosition, Quaternion.identity);
+        GameObject newCropObj = Instantiate(cropPrefab, plantPosition, Quaternion.identity);
+        
+        Crop newCrop = newCropObj.GetComponent<Crop>();
+        if (newCrop != null)
+        {
+            newCrop.InitializeFromData(cropData);
+        }
+        
+        // Remove seed from inventory
+        InventorySystem.Instance.RemoveItem(selectedSeed.ItemId);
         
         _canUse = false;
         _useTimer = 0;
@@ -180,7 +209,7 @@ public class FarmingTool : Tool
                 new Vector3(cropHit.point.x, 0, cropHit.point.z)
             );
             
-            if (distanceXZ <= HarvestRange)
+            if (distanceXZ <= UseRange)
             {
                 Crop crop = cropHit.collider.GetComponent<Crop>();
                 if (crop != null)
