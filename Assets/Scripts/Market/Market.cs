@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using TMPro;
 
 public class Market : MonoBehaviour, IInteractable
 {
@@ -7,6 +9,12 @@ public class Market : MonoBehaviour, IInteractable
     [SerializeField] private GameObject _marketPanel;
     [SerializeField] private GameObject _buyTabContent;
     [SerializeField] private GameObject _sellTabContent;
+    
+    [Header("Tab Buttons")]
+    [SerializeField] private Button _buyTabButton;
+    [SerializeField] private Button _sellTabButton;
+    [SerializeField] private Color _selectedTabColor = new Color(1f, 1f, 1f, 1f);
+    [SerializeField] private Color _unselectedTabColor = new Color(0.7f, 0.7f, 0.7f, 1f);
     
     [Header("Item Container References")]
     [SerializeField] private Transform _buyItemContainer;
@@ -37,7 +45,7 @@ public class Market : MonoBehaviour, IInteractable
     {
         _marketPanel.SetActive(true);
         GameManager.Instance.PauseGame();
-        ShowBuyTab(); // Default to buy tab
+        ShowBuyTab(); // This will also set the correct tab visuals
     }
     
     public void CloseMarket()
@@ -50,6 +58,7 @@ public class Market : MonoBehaviour, IInteractable
     {
         _buyTabContent.SetActive(true);
         _sellTabContent.SetActive(false);
+        UpdateTabVisuals(true);
         
         // Clear existing items
         foreach (Transform child in _buyItemContainer)
@@ -57,14 +66,20 @@ public class Market : MonoBehaviour, IInteractable
             Destroy(child.gameObject);
         }
         
-        // Create UI elements for each shop item
-        foreach (InventoryItem item in _shopItems)
+        // Create all slots (empty or filled)
+        for (int i = 0; i < GameConstants.MAX_MARKET_SLOTS; i++)
         {
             GameObject itemUI = Instantiate(_marketItemPrefab, _buyItemContainer);
             MarketItemUI marketItem = itemUI.GetComponent<MarketItemUI>();
-            if (marketItem != null)
+            
+            // If we have a shop item for this slot, set it up
+            if (i < _shopItems.Count)
             {
-                marketItem.SetupBuyItem(item);
+                marketItem.SetupBuyItem(_shopItems[i]);
+            }
+            else
+            {
+                marketItem.SetupEmptySlot();
             }
         }
     }
@@ -73,26 +88,36 @@ public class Market : MonoBehaviour, IInteractable
     {
         _buyTabContent.SetActive(false);
         _sellTabContent.SetActive(true);
-        UpdateSellItems(); // Refresh sell items from inventory
-    }
-    
-    private void UpdateSellItems()
-    {
+        UpdateTabVisuals(false);
+        
         // Clear existing items
         foreach (Transform child in _sellItemContainer)
         {
             Destroy(child.gameObject);
         }
         
-        // Create UI elements for each inventory item
-        foreach (InventoryItem item in InventorySystem.Instance.Items)
+        // Create all slots (empty or filled)
+        for (int i = 0; i < GameConstants.MAX_MARKET_SLOTS; i++)
         {
             GameObject itemUI = Instantiate(_marketItemPrefab, _sellItemContainer);
             MarketItemUI marketItem = itemUI.GetComponent<MarketItemUI>();
-            if (marketItem != null)
+            
+            // If we have an inventory item for this slot, set it up
+            if (i < InventorySystem.Instance.Items.Count)
             {
-                marketItem.SetupSellItem(item);
+                marketItem.SetupSellItem(InventorySystem.Instance.Items[i]);
+            }
+            else
+            {
+                marketItem.SetupEmptySlot();
             }
         }
+    }
+    
+    private void UpdateTabVisuals(bool isBuyTab)
+    {
+        // Update button colors
+        _buyTabButton.image.color = isBuyTab ? _selectedTabColor : _unselectedTabColor;
+        _sellTabButton.image.color = isBuyTab ? _unselectedTabColor : _selectedTabColor;
     }
 } 
