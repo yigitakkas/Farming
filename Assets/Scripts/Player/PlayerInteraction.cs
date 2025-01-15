@@ -21,13 +21,21 @@ public class PlayerInteraction : MonoBehaviour
     private float _interactionTimer;
     
     public int CurrentToolIndex => _currentToolIndex;
-    
+
+    private Vector3 _playerPosition;
+    private GameObject _playerVisual;
+    private PlayerController _playerController;
+    private float _raycastDistance = 35f;
     private void Start()
     {
         _mainCamera = Camera.main;
         ToolHolder.localPosition += ToolOffset;
         ToolHolder.localRotation *= Quaternion.Euler(ToolRotation);
+        _playerController = GetComponent<PlayerController>();
+        _playerVisual = _playerController.ModelTransform.gameObject;
+        _playerPosition = _playerVisual.transform.position;
         InstantiateTools();
+
     }
     
     private void Update()
@@ -89,7 +97,7 @@ public class PlayerInteraction : MonoBehaviour
                 // Left click for planting
                 if (Input.GetMouseButtonDown(0))
                 {
-                    RaycastHit[] hits = Physics.RaycastAll(ray, 100f);
+                    RaycastHit[] hits = Physics.RaycastAll(ray, _raycastDistance);
                     foreach (var hit in hits)
                     {
                         bool isOnFarmland = ((1 << hit.collider.gameObject.layer) & farmingTool.PlantingLayer.value) != 0;
@@ -103,17 +111,15 @@ public class PlayerInteraction : MonoBehaviour
                 // Right click for harvesting
                 else if (Input.GetMouseButtonDown(1))
                 {
-                    RaycastHit[] hitsRightClick = Physics.RaycastAll(ray, 100f);
-                    
+                    RaycastHit[] hitsRightClick = Physics.RaycastAll(ray, _raycastDistance);
                     foreach (var hit in hitsRightClick)
                     {
                         bool isOnCropLayer = ((1 << hit.collider.gameObject.layer) & farmingTool.CropLayer.value) != 0;
-                        
                         if (isOnCropLayer)
                         {
-                            Vector3 playerPosition = _mainCamera.transform.position;
+                            _playerPosition = _playerVisual.transform.position;
                             float distanceXZ = Vector3.Distance(
-                                new Vector3(playerPosition.x, 0, playerPosition.z),
+                                new Vector3(_playerPosition.x, 0, _playerPosition.z),
                                 new Vector3(hit.point.x, 0, hit.point.z)
                             );
                             
@@ -159,12 +165,28 @@ public class PlayerInteraction : MonoBehaviour
         if (CurrentTool == null && Input.GetMouseButtonDown(0))
         {
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, InteractionRange, InteractionLayer))
+            RaycastHit[] hits = Physics.RaycastAll(ray, _raycastDistance);
+            
+            foreach (var hit in hits)
             {
-                IInteractable interactable = hit.collider.GetComponent<IInteractable>();
-                if (interactable != null)
+                float distance = hit.distance;
+                if (((1 << hit.collider.gameObject.layer) & InteractionLayer) != 0)
                 {
-                    interactable.Interact(this);
+                    _playerPosition = _playerVisual.transform.position;
+                    float distanceXZ = Vector3.Distance(
+                        new Vector3(_playerPosition.x, 0, _playerPosition.z),
+                        new Vector3(hit.point.x, 0, hit.point.z)
+                    );
+                    
+                    if (distanceXZ <= InteractionRange)
+                    {
+                        IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+                        if (interactable != null)
+                        {
+                            interactable.Interact(this);
+                            return;
+                        }
+                    }
                 }
             }
         }
