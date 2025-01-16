@@ -16,13 +16,12 @@ public class PlayerInteraction : MonoBehaviour
     private Tool[] _instantiatedTools;
     public Tool CurrentTool;
     private int _currentToolIndex = -1;
+    public int CurrentToolIndex { get => _currentToolIndex; set => _currentToolIndex = value; }
     
     private Camera _mainCamera;
     private bool _isInteracting;
     private float _interactionTimer;
     
-    public int CurrentToolIndex => _currentToolIndex;
-
     private Vector3 _playerPosition;
     private GameObject _playerVisual;
     private PlayerController _playerController;
@@ -44,13 +43,18 @@ public class PlayerInteraction : MonoBehaviour
         _playerController = GetComponent<PlayerController>();
         _playerVisual = _playerController.ModelTransform.gameObject;
         _playerPosition = _playerVisual.transform.position;
-        InstantiateTools();
+        
+        // Initialize tools from inventory instead of ToolPrefabs
+        InstantiateToolsFromInventory();
 
         if (_interactionPromptPrefab != null)
         {
             _currentPrompt = Instantiate(_interactionPromptPrefab);
             _currentPrompt.SetActive(false);
         }
+
+        // Subscribe to inventory changes
+        InventorySystem.Instance.OnInventoryChanged += HandleInventoryChanged;
     }
     
     private void Update()
@@ -135,7 +139,7 @@ public class PlayerInteraction : MonoBehaviour
                         }
                     }
                 }
-                // Right click for harvesting
+                // Right click for harvesting/watering
                 else if (Input.GetMouseButtonDown(1))
                 {
                     RaycastHit[] hitsRightClick = Physics.RaycastAll(ray, _raycastDistance);
@@ -144,17 +148,8 @@ public class PlayerInteraction : MonoBehaviour
                         bool isOnCropLayer = ((1 << hit.collider.gameObject.layer) & farmingTool.CropLayer.value) != 0;
                         if (isOnCropLayer)
                         {
-                            _playerPosition = _playerVisual.transform.position;
-                            float distanceXZ = Vector3.Distance(
-                                new Vector3(_playerPosition.x, 0, _playerPosition.z),
-                                new Vector3(hit.point.x, 0, hit.point.z)
-                            );
-                            
-                            if (distanceXZ <= farmingTool.UseRange)
-                            {
-                                CurrentTool.UseTool(hit.point);
-                                return;
-                            }
+                            CurrentTool.UseTool(hit.point);
+                            return;
                         }
                     }
                 }
@@ -289,6 +284,67 @@ public class PlayerInteraction : MonoBehaviour
         if (_currentPrompt != null)
         {
             Destroy(_currentPrompt);
+        }
+        
+        if (InventorySystem.Instance != null)
+        {
+            InventorySystem.Instance.OnInventoryChanged -= HandleInventoryChanged;
+        }
+    }
+    
+    private void HandleInventoryChanged()
+    {
+        var tools = InventorySystem.Instance.Items.FindAll(item => 
+            item.Type == InventoryItem.ItemType.Tool);
+        
+        // Only reinstantiate if the number of tools changed
+        if (_instantiatedTools == null || _instantiatedTools.Length != tools.Count)
+        {
+            // Destroy all current tool instances
+            if (_instantiatedTools != null)
+            {
+                foreach (var tool in _instantiatedTools)
+                {
+                    if (tool != null)
+                    {
+                        Destroy(tool.gameObject);
+                    }
+                }
+            }
+            
+            // Reinstantiate tools from current inventory
+            InstantiateToolsFromInventory();
+        }
+        
+        // Reset current tool only if it was removed
+        if (CurrentTool != null)
+        {
+            bool toolStillExists = tools.Exists(item => item.ItemId == CurrentTool.ToolId);
+            
+            if (!toolStillExists)
+            {
+                CurrentTool = null;
+                _currentToolIndex = -1;
+            }
+        }
+    }
+    
+    private void InstantiateToolsFromInventory()
+    {
+        var tools = InventorySystem.Instance.Items.FindAll(item => 
+            item.Type == InventoryItem.ItemType.Tool);
+        
+        _instantiatedTools = new Tool[tools.Count];
+        
+        for (int i = 0; i < tools.Count; i++)
+        {
+            GameObject prefab = InventorySystem.Instance.GetToolPrefab(tools[i].ItemId);
+            if (prefab != null)
+            {
+                GameObject toolObj = Instantiate(prefab, ToolHolder.position, ToolHolder.rotation, ToolHolder);
+                _instantiatedTools[i] = toolObj.GetComponent<Tool>();
+                toolObj.SetActive(false);
+            }
         }
     }
 } 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44030204, g: 0.43956882, b: 0.44304112, a: 1}
+  m_IndirectSpecularColor: {r: 0.4170026, g: 0.4145766, b: 0.4170941, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1395,7 +1395,6 @@ MonoBehaviour:
   HotbarSlotPrefab: {fileID: 1823426548613761602, guid: 33f232e18c7e38e41a54ce03226c96c3, type: 3}
   HotbarContainer: {fileID: 465753971}
   NumberOfSlots: 9
-  SlotSpacing: 10
   SelectionIndicator: {fileID: 9209358607043430984}
 --- !u!114 &465753975
 MonoBehaviour:
@@ -2362,10 +2361,6 @@ MonoBehaviour:
     CropId: pepper
     StartingQuantity: 5
   - SourceType: 0
-    ItemPrefab: {fileID: 2305325346606390186, guid: 2bc58f5c1cc8a6b47aed1e38f685c7c6, type: 3}
-    CropId: 
-    StartingQuantity: 1
-  - SourceType: 0
     ItemPrefab: {fileID: 2305325346606390186, guid: ad931eeb64d20504fbe536564e9f9790, type: 3}
     CropId: 
     StartingQuantity: 1
@@ -2373,7 +2368,15 @@ MonoBehaviour:
     ItemPrefab: {fileID: 0}
     CropId: broccoli
     StartingQuantity: 1
+  - SourceType: 0
+    ItemPrefab: {fileID: 2305325346606390186, guid: 2bc58f5c1cc8a6b47aed1e38f685c7c6, type: 3}
+    CropId: 
+    StartingQuantity: 1
   Items: []
+  _toolPrefabs:
+  - {fileID: 2305325346606390186, guid: 2bc58f5c1cc8a6b47aed1e38f685c7c6, type: 3}
+  - {fileID: 2305325346606390186, guid: 8a17f1c86f985d344af7efe99eb42ea8, type: 3}
+  - {fileID: 2305325346606390186, guid: ad931eeb64d20504fbe536564e9f9790, type: 3}
 --- !u!1 &813422573
 GameObject:
   m_ObjectHideFlags: 0

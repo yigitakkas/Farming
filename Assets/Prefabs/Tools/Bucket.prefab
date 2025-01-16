@@ -45,12 +45,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e89a44fa067ba043ae59dbc345f6979, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ToolId: bucket_farming_tool
+  ToolId: Bucket
   ToolName: Bucket
   ToolModel: {fileID: 4301721771364022201}
   UseRange: 2
   UseDelay: 0.2
   _toolIcon: {fileID: 21300000, guid: b3da140af84dfd843b1d327b6af13283, type: 3}
+  BaseValue: 100
   _attributes:
     GrowthTimeMultiplier: 1
     WaterConsumptionMultiplier: 1

@@ -45,12 +45,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e89a44fa067ba043ae59dbc345f6979, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ToolId: hoe
+  ToolId: Hoe
   ToolName: Hoe
   ToolModel: {fileID: 6234837847782383041}
   UseRange: 2
   UseDelay: 0.2
   _toolIcon: {fileID: 21300000, guid: 16926bc5f7cfd244a8f12affac9dea58, type: 3}
+  BaseValue: 100
   _attributes:
     GrowthTimeMultiplier: 1
     WaterConsumptionMultiplier: 1

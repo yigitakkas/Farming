@@ -22,6 +22,8 @@ public class InventorySystem : MonoBehaviour
     public event Action<InventoryItem> OnSeedSelected;
     public InventoryItem GetSelectedSeed() => _selectedSeed;
     
+    [Header("Tool References")]
+    [SerializeField] private List<GameObject> _toolPrefabs = new List<GameObject>();
     
     private void Awake()
     {
@@ -193,5 +195,18 @@ public class InventorySystem : MonoBehaviour
         RemoveItem(item.ItemId);
         GameManager.Instance.AddMoney(sellPrice);
         OnItemSold?.Invoke(item);
+    }
+    
+    public GameObject GetToolPrefab(string toolId)
+    {
+        foreach (var prefab in _toolPrefabs)
+        {
+            Tool tool = prefab.GetComponent<Tool>();
+            if (tool != null && tool.ToolId == toolId)
+            {
+                return prefab;
+            }
+        }
+        return null;
     }
 } 
