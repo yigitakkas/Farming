@@ -35,6 +35,9 @@ public class PlayerInteraction : MonoBehaviour
     private GameObject _currentPrompt;
     private IInteractable _currentInteractable;
     
+    private bool CanInteract => !InventorySystem.Instance.IsInventoryOpen && 
+                               !MarketState.Instance.IsOpen;
+    
     private void Start()
     {
         _mainCamera = Camera.main;
@@ -59,6 +62,8 @@ public class PlayerInteraction : MonoBehaviour
     
     private void Update()
     {
+        if (!CanInteract) return;
+        
         if (GameManager.Instance.IsGamePaused) return;
         
         HandleToolSelection();

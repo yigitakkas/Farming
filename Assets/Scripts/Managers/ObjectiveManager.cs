@@ -4,6 +4,9 @@ using System;
 
 public class ObjectiveManager : MonoBehaviour
 {
+    [Header("Configuration")]
+    [SerializeField] private ObjectiveDatabase _objectiveDatabase;
+    
     public static ObjectiveManager Instance { get; private set; }
     
     public List<Objective> CurrentObjectives = new List<Objective>();
@@ -27,25 +30,27 @@ public class ObjectiveManager : MonoBehaviour
     
     private void Start()
     {
-        InitializeStartingObjectives();
+        if (_objectiveDatabase == null)
+        {
+            Debug.LogError("Objective Database not assigned!");
+            return;
+        }
+
+        // Add initial objectives
+        foreach (var config in _objectiveDatabase.InitialMoneyObjectives)
+        {
+            AddObjective(CreateObjectiveFromConfig(config));
+        }
+        
+        foreach (var config in _objectiveDatabase.InitialCropObjectives)
+        {
+            AddObjective(CreateObjectiveFromConfig(config));
+        }
     }
     
     private void Update()
     {
         CheckObjectives();
-    }
-    
-    private void InitializeStartingObjectives()
-    {
-        // Add starting objectives
-        AddObjective(new MoneyObjective("earn_100", "First Profits", "Earn $100", 100f, 20f));
-        AddObjective(new CropObjective("harvest_5", "Beginning Farmer", "Harvest 5 crops", 5, 50f));
-    }
-    
-    public void AddObjective(Objective objective)
-    {
-        CurrentObjectives.Add(objective);
-        OnNewObjectiveAdded?.Invoke(objective);
     }
     
     private void CheckObjectives()
@@ -61,22 +66,51 @@ public class ObjectiveManager : MonoBehaviour
                 OnObjectiveCompleted?.Invoke(objective);
                 
                 // Add follow-up objective if appropriate
-                AddFollowUpObjective(objective);
+                AddFollowUpObjective(objective.Id);
             }
         }
     }
     
-    private void AddFollowUpObjective(Objective completedObjective)
+    private void AddFollowUpObjective(string completedObjectiveId)
     {
-        // Add progressively harder objectives based on completed ones
-        switch (completedObjective.Id)
+        var followUp = _objectiveDatabase.FollowUpObjectives.Find(f => f.TriggerObjectiveId == completedObjectiveId);
+        if (followUp != null)
         {
-            case "earn_100":
-                AddObjective(new MoneyObjective("earn_500", "Growing Business", "Earn $500", 500f, 100f));
-                break;
-            case "harvest_5":
-                AddObjective(new CropObjective("harvest_20", "Established Farmer", "Harvest 20 crops", 20, 150f));
-                break;
+            AddObjective(CreateObjectiveFromConfig(followUp.NewObjective));
+        }
+    }
+    
+    public void AddObjective(Objective objective)
+    {
+        CurrentObjectives.Add(objective);
+        OnNewObjectiveAdded?.Invoke(objective);
+    }
+    
+    private Objective CreateObjectiveFromConfig(ObjectiveConfig config)
+    {
+        switch (config)
+        {
+            case MoneyObjectiveConfig moneyConfig:
+                return new MoneyObjective(
+                    moneyConfig.Id,
+                    moneyConfig.Title,
+                    moneyConfig.Description ?? $"Earn ${moneyConfig.TargetMoney:F2}",
+                    moneyConfig.TargetMoney,
+                    moneyConfig.Reward
+                );
+                
+            case CropObjectiveConfig cropConfig:
+                return new CropObjective(
+                    cropConfig.Id,
+                    cropConfig.Title,
+                    cropConfig.Description ?? $"Harvest {cropConfig.TargetCount} crops",
+                    cropConfig.TargetCount,
+                    cropConfig.Reward
+                );
+                
+            default:
+                Debug.LogError($"Unknown objective config type: {config.GetType()}");
+                return null;
         }
     }
 } 

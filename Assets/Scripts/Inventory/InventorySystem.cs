@@ -25,6 +25,8 @@ public class InventorySystem : MonoBehaviour
     [Header("Tool References")]
     [SerializeField] private List<GameObject> _toolPrefabs = new List<GameObject>();
     
+    public bool IsInventoryOpen { get; private set; }
+    
     private void Awake()
     {
         if (Instance == null)
@@ -208,5 +210,15 @@ public class InventorySystem : MonoBehaviour
             }
         }
         return null;
+    }
+    
+    public void OpenInventory()
+    {
+        IsInventoryOpen = true;
+    }
+    
+    public void CloseInventory()
+    {
+        IsInventoryOpen = false;
     }
 } 

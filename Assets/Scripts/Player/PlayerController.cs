@@ -30,6 +30,9 @@ public class PlayerController : MonoBehaviour
     private static readonly int Jump = Animator.StringToHash("Jump");
     private static readonly int IsGrounded = Animator.StringToHash("IsGrounded");
     
+    private bool CanMove => !InventorySystem.Instance.IsInventoryOpen && 
+                           !MarketState.Instance.IsOpen;
+    
     private void Start()
     {
         _controller = GetComponent<CharacterController>();
@@ -40,6 +43,8 @@ public class PlayerController : MonoBehaviour
     
     private void Update()
     {
+        if (!CanMove) return;
+        
         CheckGround();
         HandleMovement();
         HandleJump();

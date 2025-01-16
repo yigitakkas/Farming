@@ -51,7 +51,7 @@ MonoBehaviour:
   UseRange: 2
   UseDelay: 0.2
   _toolIcon: {fileID: 21300000, guid: b3da140af84dfd843b1d327b6af13283, type: 3}
-  BaseValue: 100
+  BaseValue: 25
   _attributes:
     GrowthTimeMultiplier: 1
     WaterConsumptionMultiplier: 1
