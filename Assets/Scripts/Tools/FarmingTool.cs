@@ -215,24 +215,11 @@ public class FarmingTool : Tool
             {
                 _wateringPreview.SetActive(true);
                 _wateringPreview.transform.position = hit.point;
-                
-                // Optional: Show which crops will be affected
-                ShowWateringRadius(hit.point);
             }
         }
-    }
-    
-    private void ShowWateringRadius(Vector3 center)
-    {
-        // Find all crops within radius
-        Collider[] hitColliders = Physics.OverlapSphere(center, WateringRadius, CropLayer);
-        foreach (var collider in hitColliders)
+        else
         {
-            Crop crop = collider.GetComponent<Crop>();
-            if (crop != null)
-            {
-                // Optional: Highlight crops that will be watered
-            }
+            _wateringPreview.SetActive(false);
         }
     }
     
@@ -360,26 +347,22 @@ public class FarmingTool : Tool
             
             if (distanceXZ <= UseRange)
             {
-                // Water all crops in radius
-                Collider[] hitColliders = Physics.OverlapSphere(hit.point, WateringRadius, CropLayer);
-                foreach (var collider in hitColliders)
+                // Water only the clicked crop
+                Crop crop = hit.collider.GetComponent<Crop>();
+                if (crop != null)
                 {
-                    Crop crop = collider.GetComponent<Crop>();
-                    if (crop != null)
+                    crop.Water();
+                    
+                    // Play particle effect
+                    if (WaterParticles != null)
                     {
-                        crop.Water();
+                        WaterParticles.transform.position = hit.point;
+                        WaterParticles.Play();
                     }
+                    
+                    _canUse = false;
+                    _useTimer = 0;
                 }
-                
-                // Play particle effect
-                if (WaterParticles != null)
-                {
-                    WaterParticles.transform.position = hit.point;
-                    WaterParticles.Play();
-                }
-                
-                _canUse = false;
-                _useTimer = 0;
             }
         }
     }

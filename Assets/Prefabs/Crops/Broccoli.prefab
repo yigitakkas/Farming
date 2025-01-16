@@ -45,19 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bace438c44c9a64caad64e8bd45bd27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CropId: broccoli
-  CropName: Broccoli
-  GrowthStages: 3
-  TimePerStage: 1
-  WaterConsumptionPerDay: 0.2
-  BaseValue: 10
   SmallModelPrefab: {fileID: 1183092925370852, guid: ffbd0df073c0df148ae86268bd08c6c1, type: 3}
   MediumModelPrefab: {fileID: 1928558604182438, guid: 007624b1cde2b434a8166ff9d5e8adcf, type: 3}
   LargeModelPrefab: {fileID: 1106747676239828, guid: 5bef825efcb5f534f8d005ed0e8379cf, type: 3}
-  CropIcon: {fileID: 21300000, guid: fdb6ffa311895cd48b3e2a4e93b9ff30, type: 3}
+  WaterReminderPrefab: {fileID: 5862352020556860747, guid: 9f2eef767b9b6fe45904d27a4ed9f3f4, type: 3}
   CurrentGrowthTime: 12
   CurrentStage: 0
-  IsWatered: 0
+  _waterLevel: 0
+  _maxWaterLevel: 1
 --- !u!65 &7786526025373268881
 BoxCollider:
   m_ObjectHideFlags: 0

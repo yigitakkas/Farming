@@ -44,6 +44,14 @@ public class Crop : MonoBehaviour, IInteractable
             
         // Set layers
         SetCropLayers();
+        
+        // Initialize water reminder
+        if (WaterReminderPrefab != null)
+        {
+            _waterReminderInstance = Instantiate(WaterReminderPrefab, transform);
+            _waterReminderInstance.transform.localPosition = Vector3.up * 1.5f; // Adjust height as needed
+            _waterReminderInstance.SetActive(false);
+        }
     }
     
     private void SetCropLayers()
@@ -59,6 +67,7 @@ public class Crop : MonoBehaviour, IInteractable
     public GameObject SmallModelPrefab;
     public GameObject MediumModelPrefab;
     public GameObject LargeModelPrefab;
+    public GameObject WaterReminderPrefab;
     
     [Header("Current State")]
     [SerializeField] private float CurrentGrowthTime;
@@ -74,6 +83,7 @@ public class Crop : MonoBehaviour, IInteractable
     private GameObject _smallModel;
     private GameObject _mediumModel;
     private GameObject _largeModel;
+    private GameObject _waterReminderInstance;
     
     public event Action<Crop> OnCropHarvested;
     
@@ -150,8 +160,16 @@ public class Crop : MonoBehaviour, IInteractable
     
     private void UpdateWaterVisuals()
     {
-        // Add visual feedback for watered state
-        // This could be a particle effect, shader effect, or simple color change
+        if (_waterReminderInstance != null)
+        {
+            _waterReminderInstance.SetActive(_waterLevel <= 0f);
+            
+            // Optional: Make it face the camera
+            if (_waterReminderInstance.activeSelf)
+            {
+                _waterReminderInstance.transform.rotation = Camera.main.transform.rotation;
+            }
+        }
     }
     
     public bool IsReadyToHarvest()
@@ -209,6 +227,7 @@ public class Crop : MonoBehaviour, IInteractable
         if (_smallModel) Destroy(_smallModel);
         if (_mediumModel) Destroy(_mediumModel);
         if (_largeModel) Destroy(_largeModel);
+        if (_waterReminderInstance) Destroy(_waterReminderInstance);
     }
     
     public void Interact(PlayerInteraction player)

@@ -45,19 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bace438c44c9a64caad64e8bd45bd27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CropId: pepper
-  CropName: Pepper
-  GrowthStages: 3
-  TimePerStage: 1
-  WaterConsumptionPerDay: 0.2
-  BaseValue: 10
   SmallModelPrefab: {fileID: 1524633795520318, guid: 82f10a03b26c99347a386e3353b20dce, type: 3}
   MediumModelPrefab: {fileID: 1301175983816860, guid: 26239641aebea554d8322e56aeb9d3fa, type: 3}
   LargeModelPrefab: {fileID: 1000244816479596, guid: d5b77212d892ff6468be453c8834d9b9, type: 3}
-  CropIcon: {fileID: 21300000, guid: fd7e208f8b8fb344d98de85188cc89e3, type: 3}
+  WaterReminderPrefab: {fileID: 5862352020556860747, guid: 9f2eef767b9b6fe45904d27a4ed9f3f4, type: 3}
   CurrentGrowthTime: 12
   CurrentStage: 0
-  IsWatered: 0
+  _waterLevel: 0
+  _maxWaterLevel: 1
 --- !u!65 &2882826463049583422
 BoxCollider:
   m_ObjectHideFlags: 0
