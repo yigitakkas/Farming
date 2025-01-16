@@ -11,6 +11,10 @@ public abstract class Tool : MonoBehaviour
     [SerializeField] protected Sprite _toolIcon;
     public Sprite ToolIcon => _toolIcon;
     
+    [Header("Tool Attributes")]
+    [SerializeField] protected ToolAttributes _attributes = new ToolAttributes();
+    public ToolAttributes Attributes => _attributes;
+    
     protected bool _canUse = true;
     protected float _useTimer;
     

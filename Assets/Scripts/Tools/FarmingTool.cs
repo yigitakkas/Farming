@@ -7,10 +7,10 @@ public class FarmingTool : Tool
     
     public enum FarmingToolType
     {
-        Spade,      // For planting
-        Watering,   // For watering
-        Scythe,     // For harvesting
-        Hoe         // For both planting and harvesting
+        Planting,    // For planting only
+        Harvesting,  // For harvesting only
+        Watering,    // For watering only
+        Cultivator   // For both planting and harvesting
     }
     
     [Header("Interaction Settings")]
@@ -99,18 +99,18 @@ public class FarmingTool : Tool
         // Show appropriate previews based on tool type
         switch (ToolType)
         {
-            case FarmingToolType.Spade:
+            case FarmingToolType.Planting:
                 if (InventorySystem.Instance.GetSelectedSeed() != null)
                 {
                     UpdatePlantingPreview();
                 }
                 break;
             
-            case FarmingToolType.Scythe:
+            case FarmingToolType.Harvesting:
                 UpdateHarvestPreview();
                 break;
             
-            case FarmingToolType.Hoe:
+            case FarmingToolType.Cultivator:
                 bool isShowingHarvestPreview = UpdateHarvestPreview();
                 if (!isShowingHarvestPreview && InventorySystem.Instance.GetSelectedSeed() != null)
                 {
@@ -228,13 +228,13 @@ public class FarmingTool : Tool
         
         switch (ToolType)
         {
-            case FarmingToolType.Spade:
+            case FarmingToolType.Planting:
                 HandlePlanting();
                 break;
-            case FarmingToolType.Scythe:
+            case FarmingToolType.Harvesting:
                 HandleHarvesting(usePosition);
                 break;
-            case FarmingToolType.Hoe:
+            case FarmingToolType.Cultivator:
                 // Try harvesting first, if no harvestable crop is found, try planting
                 if (!TryHarvesting(usePosition))
                 {
@@ -262,6 +262,9 @@ public class FarmingTool : Tool
         
         if (cropPrefab == null || cropData == null) return;
         
+        // Apply tool attributes to crop data
+        cropData = ModifyCropData(cropData);
+        
         // Plant the crop and initialize it
         Vector3 plantPosition = _currentPreview.transform.position;
         GameObject newCropObj = Instantiate(cropPrefab, plantPosition, Quaternion.identity);
@@ -277,6 +280,26 @@ public class FarmingTool : Tool
         
         _canUse = false;
         _useTimer = 0;
+    }
+    
+    private CropData ModifyCropData(CropData originalData)
+    {
+        // Create a copy of the data to modify
+        CropData modifiedData = new CropData
+        {
+            CropId = originalData.CropId,
+            CropName = originalData.CropName,
+            CropPrefab = originalData.CropPrefab,
+            CropIcon = originalData.CropIcon,
+            SeedIcon = originalData.SeedIcon,
+            BaseValue = originalData.BaseValue,
+            SeedValue = originalData.SeedValue,
+            GrowthStages = originalData.GrowthStages,
+            TimePerStage = originalData.TimePerStage * _attributes.GrowthTimeMultiplier,
+            WaterConsumptionPerDay = originalData.WaterConsumptionPerDay * _attributes.WaterConsumptionMultiplier
+        };
+        
+        return modifiedData;
     }
     
     private void HandleHarvesting(Vector3 usePosition)
@@ -297,7 +320,15 @@ public class FarmingTool : Tool
                 Crop crop = cropHit.collider.GetComponent<Crop>();
                 if (crop != null)
                 {
-                    crop.Harvest();
+                    // Apply harvest quantity multiplier
+                    int baseQuantity = 1;
+                    int modifiedQuantity = Mathf.RoundToInt(baseQuantity * _attributes.HarvestQuantityMultiplier);
+                    
+                    for (int i = 0; i < modifiedQuantity; i++)
+                    {
+                        crop.Harvest();
+                    }
+                    
                     _canUse = false;
                     _useTimer = 0;
                 }
@@ -322,7 +353,15 @@ public class FarmingTool : Tool
                 Crop crop = cropHit.collider.GetComponent<Crop>();
                 if (crop != null && crop.IsReadyToHarvest())
                 {
-                    crop.Harvest();
+                    // Apply harvest quantity multiplier
+                    int baseQuantity = 1;
+                    int modifiedQuantity = Mathf.RoundToInt(baseQuantity * _attributes.HarvestQuantityMultiplier);
+                    
+                    for (int i = 0; i < modifiedQuantity; i++)
+                    {
+                        crop.Harvest();
+                    }
+                    
                     _canUse = false;
                     _useTimer = 0;
                     return true;

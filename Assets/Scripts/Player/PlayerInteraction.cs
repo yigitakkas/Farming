@@ -202,8 +202,8 @@ public class PlayerInteraction : MonoBehaviour
                 bool hasPlantingTool = false;
                 if (CurrentTool is FarmingTool farmingTool)
                 {
-                    hasPlantingTool = farmingTool.ToolType == FarmingTool.FarmingToolType.Spade || 
-                                     farmingTool.ToolType == FarmingTool.FarmingToolType.Hoe;
+                    hasPlantingTool = farmingTool.ToolType == FarmingTool.FarmingToolType.Planting || 
+                                     farmingTool.ToolType == FarmingTool.FarmingToolType.Cultivator;
                 }
                 
                 if (!hasPlantingTool)
