@@ -31,6 +31,11 @@ public class PlayerInteraction : MonoBehaviour
     [Header("UI Feedback")]
     [SerializeField] private GameObject _errorMessagePrefab;
     
+    [Header("Interaction")]
+    [SerializeField] private GameObject _interactionPromptPrefab;
+    private GameObject _currentPrompt;
+    private IInteractable _currentInteractable;
+    
     private void Start()
     {
         _mainCamera = Camera.main;
@@ -41,50 +46,30 @@ public class PlayerInteraction : MonoBehaviour
         _playerPosition = _playerVisual.transform.position;
         InstantiateTools();
 
+        if (_interactionPromptPrefab != null)
+        {
+            _currentPrompt = Instantiate(_interactionPromptPrefab);
+            _currentPrompt.SetActive(false);
+        }
     }
     
     private void Update()
     {
         if (GameManager.Instance.IsGamePaused) return;
         
-        // Handle tool selection with number keys
         HandleToolSelection();
         
-        // Handle mouse input
+        // Handle farming interactions
         if (Input.GetMouseButtonDown(0))
         {
-            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            
-            if (Physics.Raycast(ray, out hit))
-            {
-                int hitLayer = hit.collider.gameObject.layer;
-                bool isOnFarmland = ((1 << hitLayer) & FarmlandLayer.value) != 0;
-                
-                if (isOnFarmland)  // Only show error messages for farmland
-                {
-                    // Check if we have a planting tool equipped
-                    if (CurrentTool == null || !(CurrentTool is FarmingTool))
-                    {
-                        ShowErrorMessage("Need planting tool!", hit.point);
-                        return;
-                    }
-                    
-                    // Check if we have a seed selected
-                    if (InventorySystem.Instance.GetSelectedSeed() == null)
-                    {
-                        ShowErrorMessage("Select a seed first!", hit.point);
-                        return;
-                    }
-                }
-            }
+            HandleFarmingInteraction();
         }
         
         // Handle tool usage
         HandleToolUse();
         
-        // Handle direct interactions when no tool is equipped
-        HandleInteraction();
+        // Handle proximity-based interactions
+        HandleProximityInteraction();
     }
     
     // Creates instances of all tool prefabs
@@ -201,36 +186,78 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
     
-    // Handles direct interactions with objects when no tool is equipped
-    private void HandleInteraction()
+    private void HandleFarmingInteraction()
     {
-        if (CurrentTool == null && Input.GetMouseButtonDown(0))
+        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        
+        if (Physics.Raycast(ray, out hit))
         {
-            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit[] hits = Physics.RaycastAll(ray, _raycastDistance);
+            int hitLayer = hit.collider.gameObject.layer;
+            bool isOnFarmland = ((1 << hitLayer) & FarmlandLayer.value) != 0;
             
-            foreach (var hit in hits)
+            if (isOnFarmland)
             {
-                float distance = hit.distance;
-                if (((1 << hit.collider.gameObject.layer) & InteractionLayer) != 0)
+                // Check if we have a planting-capable tool equipped
+                bool hasPlantingTool = false;
+                if (CurrentTool is FarmingTool farmingTool)
                 {
-                    _playerPosition = _playerVisual.transform.position;
-                    float distanceXZ = Vector3.Distance(
-                        new Vector3(_playerPosition.x, 0, _playerPosition.z),
-                        new Vector3(hit.point.x, 0, hit.point.z)
-                    );
-                    
-                    if (distanceXZ <= InteractionRange)
-                    {
-                        IInteractable interactable = hit.collider.GetComponent<IInteractable>();
-                        if (interactable != null)
-                        {
-                            interactable.Interact(this);
-                            return;
-                        }
-                    }
+                    hasPlantingTool = farmingTool.ToolType == FarmingTool.FarmingToolType.Spade || 
+                                     farmingTool.ToolType == FarmingTool.FarmingToolType.Hoe;
+                }
+                
+                if (!hasPlantingTool)
+                {
+                    ShowErrorMessage("Need planting tool!", hit.point);
+                    return;
+                }
+                
+                // Check if we have a seed selected
+                if (InventorySystem.Instance.GetSelectedSeed() == null)
+                {
+                    ShowErrorMessage("Select a seed first!", hit.point);
+                    return;
                 }
             }
+        }
+    }
+    
+    private void HandleProximityInteraction()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, InteractionRange, InteractionLayer);
+        bool foundInteractable = false;
+        
+        foreach (var hitCollider in hitColliders)
+        {
+            IInteractable interactable = hitCollider.GetComponent<IInteractable>();
+            if (interactable != null)
+            {
+                foundInteractable = true;
+                _currentInteractable = interactable;
+                
+                // Show prompt at the interactable object's position
+                if (_currentPrompt != null)
+                {
+                    _currentPrompt.SetActive(true);
+                    _currentPrompt.transform.position = hitCollider.transform.position + Vector3.up * 2f;
+                }
+                
+                // Handle interaction when E is pressed
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    interactable.Interact(this);
+                }
+                break;
+            }
+        }
+        
+        if (!foundInteractable)
+        {
+            if (_currentPrompt != null)
+            {
+                _currentPrompt.SetActive(false);
+            }
+            _currentInteractable = null;
         }
     }
     
@@ -254,6 +281,14 @@ public class PlayerInteraction : MonoBehaviour
         else
         {
             Debug.LogError("FloatingMessage component not found on prefab!");
+        }
+    }
+    
+    private void OnDestroy()
+    {
+        if (_currentPrompt != null)
+        {
+            Destroy(_currentPrompt);
         }
     }
 } 

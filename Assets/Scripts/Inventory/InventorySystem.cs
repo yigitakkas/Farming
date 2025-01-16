@@ -85,6 +85,14 @@ public class InventorySystem : MonoBehaviour
     
     public void SelectSeed(InventoryItem item)
     {
+        // If clicking the same seed that's already selected, deselect it
+        if (item != null && _selectedSeed != null && item.ItemId == _selectedSeed.ItemId)
+        {
+            _selectedSeed = null;
+            OnSeedSelected?.Invoke(null);
+            return;
+        }
+        
         // Only allow selection if we have the item
         if (item != null && !HasItem(item.ItemId))
         {

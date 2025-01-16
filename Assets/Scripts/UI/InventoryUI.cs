@@ -32,6 +32,12 @@ public class InventoryUI : MonoBehaviour
         {
             ToggleInventory();
         }
+        
+        // Close inventory with ESC key if it's open
+        if (Input.GetKeyDown(KeyCode.Escape) && _inventoryPanel.activeSelf)
+        {
+            CloseInventory();
+        }
     }
     
     private void ToggleInventory()
@@ -49,6 +55,15 @@ public class InventoryUI : MonoBehaviour
             {
                 GameManager.Instance.ResumeGame();
             }
+        }
+    }
+    
+    public void CloseInventory()
+    {
+        _inventoryPanel.SetActive(false);
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ResumeGame();
         }
     }
     
