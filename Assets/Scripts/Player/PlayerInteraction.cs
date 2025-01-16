@@ -4,7 +4,8 @@ public class PlayerInteraction : MonoBehaviour
 {
     [Header("Interaction Settings")]
     public float InteractionRange = 2f;
-    public LayerMask InteractionLayer;
+    public LayerMask InteractionLayer;  // For general interactions like market
+    public LayerMask FarmlandLayer;     // Specifically for farmland
     
     [Header("Tool Settings")]
     public Transform ToolHolder;
@@ -26,6 +27,10 @@ public class PlayerInteraction : MonoBehaviour
     private GameObject _playerVisual;
     private PlayerController _playerController;
     private float _raycastDistance = 35f;
+    
+    [Header("UI Feedback")]
+    [SerializeField] private GameObject _errorMessagePrefab;
+    
     private void Start()
     {
         _mainCamera = Camera.main;
@@ -40,8 +45,45 @@ public class PlayerInteraction : MonoBehaviour
     
     private void Update()
     {
+        if (GameManager.Instance.IsGamePaused) return;
+        
+        // Handle tool selection with number keys
         HandleToolSelection();
+        
+        // Handle mouse input
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            
+            if (Physics.Raycast(ray, out hit))
+            {
+                int hitLayer = hit.collider.gameObject.layer;
+                bool isOnFarmland = ((1 << hitLayer) & FarmlandLayer.value) != 0;
+                
+                if (isOnFarmland)  // Only show error messages for farmland
+                {
+                    // Check if we have a planting tool equipped
+                    if (CurrentTool == null || !(CurrentTool is FarmingTool))
+                    {
+                        ShowErrorMessage("Need planting tool!", hit.point);
+                        return;
+                    }
+                    
+                    // Check if we have a seed selected
+                    if (InventorySystem.Instance.GetSelectedSeed() == null)
+                    {
+                        ShowErrorMessage("Select a seed first!", hit.point);
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // Handle tool usage
         HandleToolUse();
+        
+        // Handle direct interactions when no tool is equipped
         HandleInteraction();
     }
     
@@ -189,6 +231,29 @@ public class PlayerInteraction : MonoBehaviour
                     }
                 }
             }
+        }
+    }
+    
+    private void ShowErrorMessage(string message, Vector3 position)
+    {
+        if (_errorMessagePrefab == null)
+        {
+            Debug.LogError("Error message prefab is not assigned!");
+            return;
+        }
+        
+        GameObject messageObj = Instantiate(_errorMessagePrefab, 
+            position + Vector3.up * 1.5f,
+            Quaternion.identity);
+        
+        FloatingMessage floatingMessage = messageObj.GetComponent<FloatingMessage>();
+        if (floatingMessage != null)
+        {
+            floatingMessage.SetMessage(message);
+        }
+        else
+        {
+            Debug.LogError("FloatingMessage component not found on prefab!");
         }
     }
 } 

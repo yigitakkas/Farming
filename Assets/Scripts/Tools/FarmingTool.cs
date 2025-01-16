@@ -28,7 +28,6 @@ public class FarmingTool : Tool
     
     [Header("Watering Settings")]
     public GameObject WateringPreview;
-    public float WateringRadius = 1f; // Area of effect for watering
     public ParticleSystem WaterParticles;
     
     private GameObject _wateringPreview;

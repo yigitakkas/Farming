@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.40863147, g: 0.40551794, b: 0.4076321, a: 1}
+  m_IndirectSpecularColor: {r: 0.39491838, g: 0.39058748, b: 0.39195874, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4338,6 +4338,9 @@ MonoBehaviour:
   InteractionLayer:
     serializedVersion: 2
     m_Bits: 2304
+  FarmlandLayer:
+    serializedVersion: 2
+    m_Bits: 512
   ToolHolder: {fileID: 4615289078022764934}
   ToolPrefabs:
   - {fileID: 2305325346606390186, guid: ad931eeb64d20504fbe536564e9f9790, type: 3}
@@ -4346,6 +4349,7 @@ MonoBehaviour:
   ToolOffset: {x: 0, y: 0, z: 0}
   ToolRotation: {x: 45, y: 90, z: 30}
   CurrentTool: {fileID: 0}
+  _errorMessagePrefab: {fileID: 8967305228129208970, guid: 62144f9904a557b4bbdcacc58cdb4d2e, type: 3}
 --- !u!114 &1653526428
 MonoBehaviour:
   m_ObjectHideFlags: 0
