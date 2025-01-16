@@ -6,14 +6,22 @@ public class InventorySystem : MonoBehaviour
 {
     public static InventorySystem Instance { get; private set; }
     
+    [Header("Inventory Settings")]
     public int MaxInventorySlots = 24;
+    
+    [Header("Starting Items")]
+    [SerializeField] private List<StartingInventoryItem> _startingItems = new List<StartingInventoryItem>();
+    
     public List<InventoryItem> Items = new List<InventoryItem>();
     
     public event Action OnInventoryChanged;
     public event Action<InventoryItem> OnItemAdded;
+    public event Action<InventoryItem> OnItemSold;
     
     private InventoryItem _selectedSeed;
     public event Action<InventoryItem> OnSeedSelected;
+    public InventoryItem GetSelectedSeed() => _selectedSeed;
+    
     
     private void Awake()
     {
@@ -103,30 +111,87 @@ public class InventorySystem : MonoBehaviour
         OnSeedSelected?.Invoke(item);
     }
     
-    public InventoryItem GetSelectedSeed() => _selectedSeed;
-    
     private void Start()
     {
-        // Add some starting seeds
-        AddStartingSeeds();
+        AddStartingItems();
     }
     
-    private void AddStartingSeeds()
+    private void AddStartingItems()
     {
-        // Get seed items from CropManager
-        var carrotSeed = CropManager.Instance.CreateSeedItem("carrot");
-        var broccoliSeed = CropManager.Instance.CreateSeedItem("broccoli");
-        
-        if (carrotSeed != null)
+        foreach (var startingItem in _startingItems)
         {
-            carrotSeed.Quantity = 5;
-            AddItem(carrotSeed);
+            switch (startingItem.SourceType)
+            {
+                case StartingInventoryItem.ItemSourceType.Tool:
+                    AddStartingTool(startingItem);
+                    break;
+                    
+                case StartingInventoryItem.ItemSourceType.Seed:
+                    AddStartingSeed(startingItem);
+                    break;
+                    
+                case StartingInventoryItem.ItemSourceType.Crop:
+                    AddStartingCrop(startingItem);
+                    break;
+            }
         }
+    }
+    
+    private void AddStartingTool(StartingInventoryItem startingItem)
+    {
+        if (startingItem.ItemPrefab == null) return;
         
-        if (broccoliSeed != null)
+        Tool tool = startingItem.ItemPrefab.GetComponent<Tool>();
+        if (tool != null)
         {
-            broccoliSeed.Quantity = 5;
-            AddItem(broccoliSeed);
+            InventoryItem item = new InventoryItem(
+                tool.ToolId,
+                tool.ToolName,
+                InventoryItem.ItemType.Tool,
+                tool.ToolIcon,
+                tool.BaseValue
+            );
+            item.Quantity = startingItem.StartingQuantity;
+            AddItem(item);
         }
+    }
+    
+    private void AddStartingSeed(StartingInventoryItem startingItem)
+    {
+        if (string.IsNullOrEmpty(startingItem.CropId)) return;
+        
+        InventoryItem seedItem = CropManager.Instance.CreateSeedItem(startingItem.CropId);
+        if (seedItem != null)
+        {
+            seedItem.Quantity = startingItem.StartingQuantity;
+            AddItem(seedItem);
+        }
+    }
+    
+    private void AddStartingCrop(StartingInventoryItem startingItem)
+    {
+        if (string.IsNullOrEmpty(startingItem.CropId)) return;
+        
+        CropData cropData = CropManager.Instance.GetCropData(startingItem.CropId);
+        if (cropData != null)
+        {
+            InventoryItem cropItem = new InventoryItem(
+                cropData.CropId,
+                cropData.CropName,
+                InventoryItem.ItemType.Crop,
+                cropData.CropIcon,
+                cropData.BaseValue
+            );
+            cropItem.Quantity = startingItem.StartingQuantity;
+            AddItem(cropItem);
+        }
+    }
+    
+    public void SellItem(InventoryItem item)
+    {
+        float sellPrice = item.Value * item.SellMultiplier;
+        RemoveItem(item.ItemId);
+        GameManager.Instance.AddMoney(sellPrice);
+        OnItemSold?.Invoke(item);
     }
 } 

@@ -9,7 +9,8 @@ public class GameManager : MonoBehaviour
     private bool _isGamePaused;
     public bool IsGamePaused => _isGamePaused;
     
-    public float PlayerMoney { get; private set; }
+    //public float PlayerMoney { get; private set; }
+    public float PlayerMoney;
     
     public event Action<float> OnMoneyChanged;
     

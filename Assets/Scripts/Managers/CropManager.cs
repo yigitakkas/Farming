@@ -4,16 +4,30 @@ using System.Collections.Generic;
 [System.Serializable]
 public class CropData
 {
+    [Header("Basic Info")]
     public string CropId;
     public string CropName;
+    
+    [Header("Visuals")]
     public GameObject CropPrefab;
     public Sprite CropIcon;
     public Sprite SeedIcon;
-    public float BaseValue;
-    public float SeedValue;
     
+    [Header("Economy")]
+    [Tooltip("Value of the harvested crop")]
+    public float BaseValue = 10f;
+    [Tooltip("Cost to buy the seed")]
+    public float SeedValue = 5f;
+    [Range(0.1f, 1f)]
+    [Tooltip("Percentage of value returned when selling (0.5 = 50%)")]
+    public float SellMultiplier = 0.5f;
+    
+    [Header("Growth Settings")]
+    [Range(1, 5)]
     public int GrowthStages = 3;
+    [Tooltip("Time in minutes for each growth stage")]
     public float TimePerStage = 0.5f;
+    [Range(0.1f, 1f)]
     public float WaterConsumptionPerDay = 0.2f;
 }
 
@@ -21,7 +35,10 @@ public class CropManager : MonoBehaviour
 {
     public static CropManager Instance { get; private set; }
     
-    [SerializeField] private List<CropData> _cropDatabase = new List<CropData>();
+    [Header("Crop Database")]
+    [SerializeField] 
+    [Tooltip("Configure all your crops here")]
+    private List<CropData> _cropDatabase = new List<CropData>();
     private Dictionary<string, CropData> _cropLookup;
     
     private void Awake()
@@ -84,7 +101,8 @@ public class CropManager : MonoBehaviour
                 $"{data.CropName} Seed",
                 InventoryItem.ItemType.Seed,
                 data.SeedIcon,
-                data.SeedValue
+                data.SeedValue,
+                data.SellMultiplier
             );
         }
         

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.4077985, g: 0.40480518, b: 0.40715128, a: 1}
+  m_IndirectSpecularColor: {r: 0.44030204, g: 0.43956882, b: 0.44304112, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -932,7 +932,7 @@ MonoBehaviour:
   m_Content: {fileID: 10967269}
   m_Horizontal: 1
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -1560,7 +1560,22 @@ MonoBehaviour:
   _buyItemContainer: {fileID: 10967269}
   _sellItemContainer: {fileID: 905916179}
   _marketItemPrefab: {fileID: 2905207220790801431, guid: 47c7466d637c1d646b5102c12b92fb1f, type: 3}
-  _shopItems: []
+  _marketStock:
+  - SourceType: 0
+    ItemPrefab: {fileID: 2305325346606390186, guid: 8a17f1c86f985d344af7efe99eb42ea8, type: 3}
+    CropId: 
+    CustomValue: 50
+    StockQuantity: 1
+  - SourceType: 2
+    ItemPrefab: {fileID: 0}
+    CropId: pepper
+    CustomValue: 5
+    StockQuantity: 1
+  - SourceType: 1
+    ItemPrefab: {fileID: 0}
+    CropId: pepper
+    CustomValue: 3
+    StockQuantity: 10
 --- !u!114 &504286327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1579,6 +1594,7 @@ MonoBehaviour:
   _sellTabButton: {fileID: 1275258248}
   _selectedTabColor: {r: 1, g: 1, b: 1, a: 1}
   _unselectedTabColor: {r: 0.7, g: 0.7, b: 0.7, a: 1}
+  _marketInventory: {fileID: 0}
 --- !u!114 &504286328
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1842,7 +1858,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 25, y: -25}
-  m_SizeDelta: {x: 530, y: 540}
+  m_SizeDelta: {x: 530, y: 440}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &615874834
 MonoBehaviour:
@@ -2332,6 +2348,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxInventorySlots: 24
+  _startingItems:
+  - SourceType: 1
+    ItemPrefab: {fileID: 0}
+    CropId: carrot
+    StartingQuantity: 5
+  - SourceType: 1
+    ItemPrefab: {fileID: 0}
+    CropId: broccoli
+    StartingQuantity: 5
+  - SourceType: 1
+    ItemPrefab: {fileID: 0}
+    CropId: pepper
+    StartingQuantity: 5
+  - SourceType: 0
+    ItemPrefab: {fileID: 2305325346606390186, guid: 2bc58f5c1cc8a6b47aed1e38f685c7c6, type: 3}
+    CropId: 
+    StartingQuantity: 1
+  - SourceType: 0
+    ItemPrefab: {fileID: 2305325346606390186, guid: ad931eeb64d20504fbe536564e9f9790, type: 3}
+    CropId: 
+    StartingQuantity: 1
+  - SourceType: 2
+    ItemPrefab: {fileID: 0}
+    CropId: broccoli
+    StartingQuantity: 1
   Items: []
 --- !u!1 &813422573
 GameObject:
@@ -3190,7 +3231,7 @@ MonoBehaviour:
   m_Content: {fileID: 1278283733}
   m_Horizontal: 1
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -4006,7 +4047,7 @@ MonoBehaviour:
   m_Content: {fileID: 905916179}
   m_Horizontal: 1
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -4383,7 +4424,6 @@ MonoBehaviour:
   ToolHolder: {fileID: 4615289078022764934}
   ToolPrefabs:
   - {fileID: 2305325346606390186, guid: ad931eeb64d20504fbe536564e9f9790, type: 3}
-  - {fileID: 2305325346606390186, guid: 8a17f1c86f985d344af7efe99eb42ea8, type: 3}
   - {fileID: 2305325346606390186, guid: 2bc58f5c1cc8a6b47aed1e38f685c7c6, type: 3}
   ToolOffset: {x: 0, y: 0, z: 0}
   ToolRotation: {x: 45, y: 90, z: 30}
@@ -4838,6 +4878,7 @@ MonoBehaviour:
     SeedIcon: {fileID: 21300000, guid: fdb6ffa311895cd48b3e2a4e93b9ff30, type: 3}
     BaseValue: 10
     SeedValue: 5
+    SellMultiplier: 0.5
     GrowthStages: 3
     TimePerStage: 0.5
     WaterConsumptionPerDay: 0.2
@@ -4848,6 +4889,7 @@ MonoBehaviour:
     SeedIcon: {fileID: 21300000, guid: bfecd2c936aa15641b12882528607e65, type: 3}
     BaseValue: 5
     SeedValue: 3
+    SellMultiplier: 0.5
     GrowthStages: 3
     TimePerStage: 0.5
     WaterConsumptionPerDay: 0.2
@@ -4858,6 +4900,7 @@ MonoBehaviour:
     SeedIcon: {fileID: 21300000, guid: fd7e208f8b8fb344d98de85188cc89e3, type: 3}
     BaseValue: 10
     SeedValue: 4
+    SellMultiplier: 0.5
     GrowthStages: 3
     TimePerStage: 0.75
     WaterConsumptionPerDay: 0.3
@@ -4905,6 +4948,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f465ec7aefff9243a4a0fa6d670f532, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerMoney: 50
 --- !u!4 &1845856586
 Transform:
   m_ObjectHideFlags: 0
@@ -9873,12 +9917,12 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 705507995}
-  - {fileID: 795192139}
   - {fileID: 896759591}
   - {fileID: 1653526426}
   - {fileID: 188503420}
   - {fileID: 994509895}
   - {fileID: 504286325}
+  - {fileID: 795192139}
   - {fileID: 1113112345}
   - {fileID: 1658783149}
   - {fileID: 524343238}

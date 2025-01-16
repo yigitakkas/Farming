@@ -52,10 +52,10 @@ MonoBehaviour:
   UseDelay: 0.2
   _toolIcon: {fileID: 21300000, guid: e2e5feefb781d2f4bb0aea556d3036d9, type: 3}
   _attributes:
-    GrowthTimeMultiplier: 0.5
+    GrowthTimeMultiplier: 1
     WaterConsumptionMultiplier: 1
     HarvestQuantityMultiplier: 1
-  ToolType: 0
+  ToolType: 3
   PlantingLayer:
     serializedVersion: 2
     m_Bits: 512

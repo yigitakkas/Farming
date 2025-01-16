@@ -3,34 +3,48 @@ using UnityEngine.UI;
 
 public class MarketTabManager : MonoBehaviour
 {
+    public static MarketTabManager Instance { get; private set; }
+    
+    [Header("Tab References")]
     [SerializeField] private GameObject _buyTabContent;
     [SerializeField] private GameObject _sellTabContent;
     [SerializeField] private Button _buyTabButton;
     [SerializeField] private Button _sellTabButton;
+    
+    [Header("Visual Settings")]
     [SerializeField] private Color _selectedTabColor = Color.white;
     [SerializeField] private Color _unselectedTabColor = new Color(0.7f, 0.7f, 0.7f, 1f);
     
-    private MarketInventoryManager _inventoryManager;
+    [SerializeField] private MarketInventoryManager _marketInventory;
+    
+    private bool _isBuyTabActive = true;
+    public bool IsBuyTabActive => _isBuyTabActive;
     
     private void Awake()
     {
-        _inventoryManager = GetComponent<MarketInventoryManager>();
+        Instance = this;
+        if (_marketInventory == null)
+        {
+            _marketInventory = GetComponent<MarketInventoryManager>();
+        }
     }
     
     public void ShowBuyTab()
     {
+        _isBuyTabActive = true;
         _buyTabContent.SetActive(true);
         _sellTabContent.SetActive(false);
         UpdateTabVisuals(true);
-        _inventoryManager.PopulateBuyTab();
+        _marketInventory.PopulateBuyTab();
     }
     
     public void ShowSellTab()
     {
+        _isBuyTabActive = false;
         _buyTabContent.SetActive(false);
         _sellTabContent.SetActive(true);
         UpdateTabVisuals(false);
-        _inventoryManager.PopulateSellTab();
+        _marketInventory.PopulateSellTab();
     }
     
     private void UpdateTabVisuals(bool isBuyTab)

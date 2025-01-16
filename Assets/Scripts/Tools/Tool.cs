@@ -11,6 +11,9 @@ public abstract class Tool : MonoBehaviour
     [SerializeField] protected Sprite _toolIcon;
     public Sprite ToolIcon => _toolIcon;
     
+    [Header("Shop Settings")]
+    public float BaseValue = 100f;  // Base price of the tool
+    
     [Header("Tool Attributes")]
     [SerializeField] protected ToolAttributes _attributes = new ToolAttributes();
     public ToolAttributes Attributes => _attributes;

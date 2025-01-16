@@ -16,6 +16,17 @@ public class MarketItemUI : MonoBehaviour
     private InventoryItem _item;
     private bool _isBuyMode;
     
+    private void OnEnable()
+    {
+        // Subscribe to money changes to update button state
+        GameManager.Instance.OnMoneyChanged += UpdateButtonState;
+    }
+    
+    private void OnDisable()
+    {
+        GameManager.Instance.OnMoneyChanged -= UpdateButtonState;
+    }
+    
     public void SetupEmptySlot()
     {
         _item = null;
@@ -54,64 +65,72 @@ public class MarketItemUI : MonoBehaviour
     {
         if (_item != null)
         {
-            // Update icon
-            ItemIcon.sprite = _item.ItemIcon;
             ItemIcon.enabled = true;
-            
-            // Update texts
+            ItemIcon.sprite = _item.ItemIcon;
             ItemNameText.text = _item.ItemName;
             
-            // Update quantity (only show for sell items)
-            if (!_isBuyMode)
+            // Calculate price based on buy/sell mode
+            float price = _isBuyMode ? _item.Value : _item.Value * _item.SellMultiplier;
+            PriceText.text = $"${price:F2}";
+            
+            // Only show quantity in sell mode
+            if (_isBuyMode)
             {
-                var inventoryItem = InventorySystem.Instance.Items.Find(i => i.ItemId == _item.ItemId);
-                if (inventoryItem != null)
-                {
-                    QuantityText.text = $"x{inventoryItem.Quantity}";
-                }
+                QuantityText.gameObject.SetActive(false);
             }
             else
             {
-                QuantityText.text = "";
+                QuantityText.text = $"x{_item.Quantity}";
+                QuantityText.gameObject.SetActive(true);
             }
             
-            // Update price
-            float price = _isBuyMode ? _item.Value : _item.Value * 0.5f;
-            PriceText.text = _isBuyMode ? $"Buy: ${price}" : $"Sell: ${price}";
-            
-            // Update button state
+            UpdateButtonState(_isBuyMode ? GameManager.Instance.PlayerMoney : 0);
+        }
+        else
+        {
+            ItemIcon.enabled = false;
+            ItemNameText.text = "";
+            PriceText.text = "";
+            QuantityText.text = "";
+            QuantityText.gameObject.SetActive(false);
+            ActionButton.gameObject.SetActive(false);
+        }
+    }
+    
+    private void UpdateButtonState(float currentMoney)
+    {
+        if (_item != null)
+        {
             if (_isBuyMode)
             {
-                ActionButton.interactable = GameManager.Instance.PlayerMoney >= _item.Value;
+                ActionButton.interactable = currentMoney >= _item.Value;
+                ButtonText.text = "Buy";
             }
         }
     }
     
     private void SellItem()
     {
-        float sellPrice = _item.Value * 0.5f;
-        InventorySystem.Instance.RemoveItem(_item.ItemId);
-        GameManager.Instance.AddMoney(sellPrice);
-        
-        // Check if we still have any of this item
-        var remainingItem = InventorySystem.Instance.Items.Find(i => i.ItemId == _item.ItemId);
-        if (remainingItem != null)
-        {
-            // Update the UI to show new quantity
-            UpdateUI();
-        }
-        else
-        {
-            // If no items left, empty the slot
-            SetupEmptySlot();
-        }
+        InventorySystem.Instance.SellItem(_item);
+        SetupEmptySlot();
     }
     
     private void BuyItem()
     {
         if (GameManager.Instance.PlayerMoney >= _item.Value)
         {
-            if (InventorySystem.Instance.AddItem(_item))
+            // Create a copy of the item with quantity of 1
+            InventoryItem itemToBuy = new InventoryItem(
+                _item.ItemId,
+                _item.ItemName,
+                _item.Type,
+                _item.ItemIcon,
+                _item.Value,
+                _item.SellMultiplier
+            );
+            itemToBuy.Quantity = 1;
+            
+            if (InventorySystem.Instance.AddItem(itemToBuy))
             {
                 GameManager.Instance.AddMoney(-_item.Value);
             }

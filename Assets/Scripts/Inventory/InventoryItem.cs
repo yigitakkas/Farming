@@ -9,6 +9,7 @@ public class InventoryItem
     public Sprite ItemIcon;
     public int Quantity;
     public float Value;
+    public float SellMultiplier = 0.5f;
     
     public enum ItemType
     {
@@ -18,13 +19,14 @@ public class InventoryItem
         Upgrade
     }
     
-    public InventoryItem(string id, string name, ItemType type, Sprite icon, float value)
+    public InventoryItem(string id, string name, ItemType type, Sprite icon, float value, float sellMultiplier = 0.5f)
     {
         this.ItemId = id;
         this.ItemName = name;
         this.Type = type;
         this.ItemIcon = icon;
-        this.Quantity = 1;
         this.Value = value;
+        this.SellMultiplier = sellMultiplier;
+        this.Quantity = 1;
     }
 } 
