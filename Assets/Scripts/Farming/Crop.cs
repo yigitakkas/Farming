@@ -23,7 +23,7 @@ public class Crop : MonoBehaviour, IInteractable
         // Reset growth state
         CurrentStage = 0;
         CurrentGrowthTime = 0;
-        IsWatered = true;
+        _waterLevel = 0;
         
         // Initialize models
         InitializeModels();
@@ -63,7 +63,11 @@ public class Crop : MonoBehaviour, IInteractable
     [Header("Current State")]
     [SerializeField] private float CurrentGrowthTime;
     [SerializeField] private int CurrentStage;
-    public bool IsWatered;
+    [Header("Watering")]
+    [SerializeField] private float _waterLevel = 0f;
+    [SerializeField] private float _maxWaterLevel = 1f;
+    private bool _isWatered;
+    public bool IsWatered => _waterLevel > 0f;
     public bool IsFullyGrown => CurrentStage >= _growthStages - 1;
     
     // References to instantiated models
@@ -80,7 +84,7 @@ public class Crop : MonoBehaviour, IInteractable
         {
             CurrentStage = 0;
             CurrentGrowthTime = 0;
-            IsWatered = true;
+            _waterLevel = 0;
         }
     }
     
@@ -102,47 +106,52 @@ public class Crop : MonoBehaviour, IInteractable
         {
             child.gameObject.layer = LayerMask.NameToLayer("Crops");
         }
-        
-        Debug.Log($"Crop {gameObject.name} on layer: {gameObject.layer}, layerName: {LayerMask.LayerToName(gameObject.layer)}");
     }
     
     private void Update()
     {
-        if (!GameManager.Instance.IsGamePaused && IsWatered)
+        if (!GameManager.Instance.IsGamePaused)
         {
-            float growthProgress = Time.deltaTime / TimeManager.Instance.RealSecondsPerDay;
-            CurrentGrowthTime += growthProgress;
-
-            if (CurrentGrowthTime >= _timePerStage)
-            {
-                CurrentGrowthTime = 0;
-                CurrentStage++;
-
-                if (CurrentStage >= _growthStages)
-                {
-                    CurrentStage = _growthStages - 1;
-                }
-
-                UpdateVisuals();
-            }
-            else
-            {
-                float growthPercent = CurrentGrowthTime / _timePerStage;
-                UpdateVisuals();
-            }
-
             if (IsWatered)
             {
+                // Grow only when watered
+                float growthProgress = Time.deltaTime / TimeManager.Instance.RealSecondsPerDay;
+                CurrentGrowthTime += growthProgress;
+                
+                // Consume water
                 float waterUsed = _waterConsumptionPerDay * (Time.deltaTime / TimeManager.Instance.RealSecondsPerDay);
-                // Use waterUsed for mechanics like needing to re-water plants
+                _waterLevel = Mathf.Max(0f, _waterLevel - waterUsed);
+                
+                // Update growth stage if needed
+                if (CurrentGrowthTime >= _timePerStage)
+                {
+                    CurrentGrowthTime = 0;
+                    CurrentStage++;
+                    
+                    if (CurrentStage >= _growthStages)
+                    {
+                        CurrentStage = _growthStages - 1;
+                    }
+                    
+                    UpdateVisuals();
+                }
             }
+            
+            // Always update visuals for water state
+            UpdateWaterVisuals();
         }
     }
-
     
     public void Water()
     {
-        IsWatered = true;
+        _waterLevel = _maxWaterLevel;
+        UpdateWaterVisuals();
+    }
+    
+    private void UpdateWaterVisuals()
+    {
+        // Add visual feedback for watered state
+        // This could be a particle effect, shader effect, or simple color change
     }
     
     public bool IsReadyToHarvest()

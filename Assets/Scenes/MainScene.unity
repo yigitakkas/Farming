@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44128355, g: 0.44061807, b: 0.44412294, a: 1}
+  m_IndirectSpecularColor: {r: 0.39731598, g: 0.39319804, b: 0.39471114, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4342,6 +4342,7 @@ MonoBehaviour:
   ToolPrefabs:
   - {fileID: 2305325346606390186, guid: ad931eeb64d20504fbe536564e9f9790, type: 3}
   - {fileID: 2305325346606390186, guid: 8a17f1c86f985d344af7efe99eb42ea8, type: 3}
+  - {fileID: 2305325346606390186, guid: 2bc58f5c1cc8a6b47aed1e38f685c7c6, type: 3}
   ToolOffset: {x: 0, y: 0, z: 0}
   ToolRotation: {x: 45, y: 90, z: 30}
   CurrentTool: {fileID: 0}

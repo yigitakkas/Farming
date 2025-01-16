@@ -8,7 +8,8 @@ public abstract class Tool : MonoBehaviour
     public GameObject ToolModel;
     public float UseRange = 2f;
     public float UseDelay = 0.2f;
-    public Sprite ToolIcon;
+    [SerializeField] protected Sprite _toolIcon;
+    public Sprite ToolIcon => _toolIcon;
     
     protected bool _canUse = true;
     protected float _useTimer;

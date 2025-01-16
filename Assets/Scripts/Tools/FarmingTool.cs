@@ -9,7 +9,8 @@ public class FarmingTool : Tool
     {
         Spade,      // For planting
         Watering,   // For watering
-        Scythe      // For harvesting
+        Scythe,     // For harvesting
+        Hoe         // For both planting and harvesting
     }
     
     [Header("Interaction Settings")]
@@ -24,6 +25,13 @@ public class FarmingTool : Tool
     private GameObject _harvestPreview;
     private bool _canPlantHere;
     private Transform _groundCheck;
+    
+    [Header("Watering Settings")]
+    public GameObject WateringPreview;
+    public float WateringRadius = 1f; // Area of effect for watering
+    public ParticleSystem WaterParticles;
+    
+    private GameObject _wateringPreview;
     
     private void Start()
     {
@@ -61,24 +69,67 @@ public class FarmingTool : Tool
                 child.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             }
         }
+        
+        if (WateringPreview != null)
+        {
+            _wateringPreview = Instantiate(WateringPreview);
+            _wateringPreview.SetActive(false);
+            
+            // Put on ignore raycast layer
+            _wateringPreview.layer = LayerMask.NameToLayer("Ignore Raycast");
+            foreach (Transform child in _wateringPreview.transform)
+            {
+                child.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+            }
+        }
+        
+        // Validate icon reference
+        if (_toolIcon == null)
+        {
+            Debug.LogError($"Missing tool icon for {gameObject.name}");
+        }
     }
     
     private void Update()
     {
         base.Update();
         
-        // First check for harvestable crops
-        bool showingHarvestPreview = UpdateHarvestPreview();
+        // Clear all previews first
+        HideAllPreviews();
         
-        // Only show planting preview if we're not showing harvest preview
-        if (!showingHarvestPreview)
+        // Show appropriate previews based on tool type
+        switch (ToolType)
         {
-            UpdatePlantingPreview();
+            case FarmingToolType.Spade:
+                if (InventorySystem.Instance.GetSelectedSeed() != null)
+                {
+                    UpdatePlantingPreview();
+                }
+                break;
+            
+            case FarmingToolType.Scythe:
+                UpdateHarvestPreview();
+                break;
+            
+            case FarmingToolType.Hoe:
+                bool isShowingHarvestPreview = UpdateHarvestPreview();
+                if (!isShowingHarvestPreview && InventorySystem.Instance.GetSelectedSeed() != null)
+                {
+                    UpdatePlantingPreview();
+                }
+                break;
+            
+            case FarmingToolType.Watering:
+                UpdateWateringPreview();
+                break;
         }
-        else if (_currentPreview != null)
-        {
-            _currentPreview.SetActive(false);
-        }
+    }
+    
+    private void HideAllPreviews()
+    {
+        if (_currentPreview != null) _currentPreview.SetActive(false);
+        if (_harvestPreview != null) _harvestPreview.SetActive(false);
+        if (_wateringPreview != null) _wateringPreview.SetActive(false);
     }
     
     private void UpdatePlantingPreview()
@@ -114,7 +165,6 @@ public class FarmingTool : Tool
         }
         
         _canPlantHere = false;
-        _currentPreview.SetActive(false);
     }
     
     private bool UpdateHarvestPreview()
@@ -148,6 +198,44 @@ public class FarmingTool : Tool
         return false;
     }
     
+    private void UpdateWateringPreview()
+    {
+        if (_wateringPreview == null || _groundCheck == null) return;
+        
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, CropLayer))
+        {
+            Vector3 feetPosition = _groundCheck.position;
+            float distanceXZ = Vector3.Distance(
+                new Vector3(feetPosition.x, 0, feetPosition.z),
+                new Vector3(hit.point.x, 0, hit.point.z)
+            );
+            
+            if (distanceXZ <= UseRange)
+            {
+                _wateringPreview.SetActive(true);
+                _wateringPreview.transform.position = hit.point;
+                
+                // Optional: Show which crops will be affected
+                ShowWateringRadius(hit.point);
+            }
+        }
+    }
+    
+    private void ShowWateringRadius(Vector3 center)
+    {
+        // Find all crops within radius
+        Collider[] hitColliders = Physics.OverlapSphere(center, WateringRadius, CropLayer);
+        foreach (var collider in hitColliders)
+        {
+            Crop crop = collider.GetComponent<Crop>();
+            if (crop != null)
+            {
+                // Optional: Highlight crops that will be watered
+            }
+        }
+    }
+    
     public override void UseTool(Vector3 usePosition)
     {
         if (!_canUse) return;
@@ -160,7 +248,16 @@ public class FarmingTool : Tool
             case FarmingToolType.Scythe:
                 HandleHarvesting(usePosition);
                 break;
-            // Add other tool types...
+            case FarmingToolType.Hoe:
+                // Try harvesting first, if no harvestable crop is found, try planting
+                if (!TryHarvesting(usePosition))
+                {
+                    HandlePlanting();
+                }
+                break;
+            case FarmingToolType.Watering:
+                HandleWatering(usePosition);
+                break;
         }
     }
     
@@ -222,6 +319,71 @@ public class FarmingTool : Tool
         }
     }
     
+    private bool TryHarvesting(Vector3 usePosition)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        
+        if (Physics.Raycast(ray, out RaycastHit cropHit, 100f, CropLayer))
+        {
+            Vector3 feetPosition = _groundCheck.position;
+            float distanceXZ = Vector3.Distance(
+                new Vector3(feetPosition.x, 0, feetPosition.z),
+                new Vector3(cropHit.point.x, 0, cropHit.point.z)
+            );
+            
+            if (distanceXZ <= UseRange)
+            {
+                Crop crop = cropHit.collider.GetComponent<Crop>();
+                if (crop != null && crop.IsReadyToHarvest())
+                {
+                    crop.Harvest();
+                    _canUse = false;
+                    _useTimer = 0;
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    private void HandleWatering(Vector3 usePosition)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, CropLayer))
+        {
+            Vector3 feetPosition = _groundCheck.position;
+            float distanceXZ = Vector3.Distance(
+                new Vector3(feetPosition.x, 0, feetPosition.z),
+                new Vector3(hit.point.x, 0, hit.point.z)
+            );
+            
+            if (distanceXZ <= UseRange)
+            {
+                // Water all crops in radius
+                Collider[] hitColliders = Physics.OverlapSphere(hit.point, WateringRadius, CropLayer);
+                foreach (var collider in hitColliders)
+                {
+                    Crop crop = collider.GetComponent<Crop>();
+                    if (crop != null)
+                    {
+                        crop.Water();
+                    }
+                }
+                
+                // Play particle effect
+                if (WaterParticles != null)
+                {
+                    WaterParticles.transform.position = hit.point;
+                    WaterParticles.Play();
+                }
+                
+                _canUse = false;
+                _useTimer = 0;
+            }
+        }
+    }
+    
     public override void OnEquip()
     {
         base.OnEquip();
@@ -257,6 +419,10 @@ public class FarmingTool : Tool
         if (_harvestPreview != null)
         {
             Destroy(_harvestPreview);
+        }
+        if (_wateringPreview != null)
+        {
+            Destroy(_wateringPreview);
         }
     }
 } 
