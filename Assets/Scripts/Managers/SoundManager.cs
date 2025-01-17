@@ -141,4 +141,19 @@ public class SoundManager : MonoBehaviour
     {
         ClickSource.PlayOneShot(ButtonClickSound);
     }
+
+    private void SaveVolumeSettings()
+    {
+        PlayerPrefs.SetFloat("MusicVolume", AudioSource.volume);
+        PlayerPrefs.SetFloat("SFXVolume", SfxSource.volume);
+        PlayerPrefs.Save();
+    }
+
+    private void LoadVolumeSettings()
+    {
+        AudioSource.volume = PlayerPrefs.GetFloat("MusicVolume", _originalVolume);
+        float sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 1f);
+        SfxSource.volume = sfxVolume;
+        ClickSource.volume = sfxVolume;
+    }
 }

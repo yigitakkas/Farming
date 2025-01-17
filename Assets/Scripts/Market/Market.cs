@@ -6,10 +6,13 @@ using TMPro;
 public class Market : MonoBehaviour, IInteractable
 {
     [SerializeField] private GameObject _marketPanel;
+    public GameObject MarketPanel => _marketPanel;
     
     private MarketState _state;
     private MarketTabManager _tabManager;
     private MarketInventoryManager _inventoryManager;
+    
+    public static event System.Action OnHandlingEsc;
     
     private void Awake()
     {
@@ -30,9 +33,11 @@ public class Market : MonoBehaviour, IInteractable
     
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && _marketPanel.activeSelf)
+        if (_marketPanel.activeSelf && Input.GetKeyDown(KeyCode.Escape))
         {
+            OnHandlingEsc?.Invoke();
             CloseMarket();
+            return;
         }
     }
     

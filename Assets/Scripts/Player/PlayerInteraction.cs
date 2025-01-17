@@ -38,8 +38,6 @@ public class PlayerInteraction : MonoBehaviour
     private bool CanInteract => !InventorySystem.Instance.IsInventoryOpen && 
                                !MarketState.Instance.IsOpen;
     
-    public static event System.Action OnPlantingComplete;
-    
     private void Start()
     {
         _mainCamera = Camera.main;
@@ -213,20 +211,12 @@ public class PlayerInteraction : MonoBehaviour
                     ShowErrorMessage("Need planting tool!", hit.point);
                     return;
                 }
-
+                
                 // Check if we have a seed selected
-                var selectedSeed = InventorySystem.Instance.GetSelectedSeed();
-                if (selectedSeed == null)
+                if (InventorySystem.Instance.GetSelectedSeed() == null)
                 {
                     ShowErrorMessage("Select a seed first!", hit.point);
                     return;
-                }
-
-                // Try to plant the seed
-                if (TryPlantSeed(hit.point, selectedSeed))
-                {
-                    InventorySystem.Instance.RemoveItem(selectedSeed.ItemId);
-                    OnPlantingComplete?.Invoke();
                 }
             }
         }
@@ -361,27 +351,5 @@ public class PlayerInteraction : MonoBehaviour
                 toolObj.SetActive(false);
             }
         }
-    }
-    
-    private bool TryPlantSeed(Vector3 position, InventoryItem selectedSeed)
-    {
-        if (selectedSeed == null || selectedSeed.Type != InventoryItem.ItemType.Seed) return false;
-        
-        string cropId = selectedSeed.ItemId.Replace("_seed", "");
-        GameObject cropPrefab = CropManager.Instance.GetCropPrefab(selectedSeed.ItemId);
-        CropData cropData = CropManager.Instance.GetCropData(cropId);
-        
-        if (cropPrefab == null || cropData == null) return false;
-        
-        GameObject newCropObj = Instantiate(cropPrefab, position, Quaternion.identity);
-        Crop newCrop = newCropObj.GetComponent<Crop>();
-        if (newCrop != null)
-        {
-            newCrop.InitializeFromData(cropData);
-            OnPlantingComplete?.Invoke();
-            return true;
-        }
-        
-        return false;
     }
 } 

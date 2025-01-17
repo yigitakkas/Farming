@@ -6,7 +6,6 @@ using System.Collections.Generic;
 public class InventoryUI : MonoBehaviour
 {
     [Header("UI References")]
-    [SerializeField] private GameObject _inventoryPanel;
     [SerializeField] private Transform _itemsContainer;
     [SerializeField] private GameObject _itemSlotPrefab;
     
@@ -19,52 +18,8 @@ public class InventoryUI : MonoBehaviour
     private void Start()
     {
         UpdateInventoryUI();
-        _inventoryPanel.SetActive(false);
-        
         InventorySystem.Instance.OnInventoryChanged += UpdateInventoryUI;
         InventorySystem.Instance.OnSeedSelected += UpdateSelectedSeedVisual;
-    }
-    
-    private void Update()
-    {
-        // Toggle inventory with 'I' key
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            ToggleInventory();
-        }
-        
-        // Close inventory with ESC key if it's open
-        if (Input.GetKeyDown(KeyCode.Escape) && _inventoryPanel.activeSelf)
-        {
-            CloseInventory();
-        }
-    }
-    
-    private void ToggleInventory()
-    {
-        _inventoryPanel.SetActive(!_inventoryPanel.activeSelf);
-        
-        // Optional: pause game when inventory is open
-        if (GameManager.Instance != null)
-        {
-            if (_inventoryPanel.activeSelf)
-            {
-                GameManager.Instance.PauseGame();
-            }
-            else
-            {
-                GameManager.Instance.ResumeGame();
-            }
-        }
-    }
-    
-    public void CloseInventory()
-    {
-        _inventoryPanel.SetActive(false);
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.ResumeGame();
-        }
     }
     
     private void UpdateInventoryUI()

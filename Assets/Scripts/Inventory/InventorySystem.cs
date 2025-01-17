@@ -5,6 +5,7 @@ using System;
 public class InventorySystem : MonoBehaviour
 {
     public static InventorySystem Instance { get; private set; }
+    public static event System.Action OnHandlingEsc;
     
     [Header("Inventory Settings")]
     public int MaxInventorySlots = 24;
@@ -26,6 +27,8 @@ public class InventorySystem : MonoBehaviour
     [SerializeField] private List<GameObject> _toolPrefabs = new List<GameObject>();
     
     public bool IsInventoryOpen { get; private set; }
+    
+    [SerializeField] private GameObject _inventoryPanel;
     
     private void Awake()
     {
@@ -215,16 +218,44 @@ public class InventorySystem : MonoBehaviour
     public void OpenInventory()
     {
         IsInventoryOpen = true;
+        _inventoryPanel.SetActive(true);
+        GameManager.Instance.PauseGame();
     }
     
     public void CloseInventory()
     {
         IsInventoryOpen = false;
+        _inventoryPanel.SetActive(false);
+        GameManager.Instance.ResumeGame();
     }
     
     public void ClearInventory()
     {
         Items.Clear();
         OnInventoryChanged?.Invoke();
+    }
+    
+    private void Update()
+    {
+        // Toggle inventory with 'I' key
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            ToggleInventory();
+        }
+        
+        // Close inventory with ESC key if it's open
+        if (Input.GetKeyDown(KeyCode.Escape) && IsInventoryOpen)
+        {
+            OnHandlingEsc?.Invoke();
+            CloseInventory();
+        }
+    }
+
+    public void ToggleInventory()
+    {
+        if (IsInventoryOpen)
+            CloseInventory();
+        else
+            OpenInventory();
     }
 } 

@@ -16,6 +16,9 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
+        // Always ensure time scale is 1 when entering main menu
+        Time.timeScale = 1f;
+
         // Make sure options panel is hidden at start
         if (_optionsPanel != null)
         {
