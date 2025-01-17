@@ -221,4 +221,10 @@ public class InventorySystem : MonoBehaviour
     {
         IsInventoryOpen = false;
     }
+    
+    public void ClearInventory()
+    {
+        Items.Clear();
+        OnInventoryChanged?.Invoke();
+    }
 } 
