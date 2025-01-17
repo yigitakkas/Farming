@@ -152,11 +152,39 @@ public class InventoryUI : MonoBehaviour
                 );
             }
         }
+        else if (item.Type == InventoryItem.ItemType.Seed)
+        {
+            string cropId = item.ItemId.Replace("_seed", "");
+            CropData cropData = CropManager.Instance.GetCropData(cropId);
+            if (cropData != null)
+            {
+                string description = $"Plant this to grow {cropData.CropName}.\n" + cropData.GetDescription();
+                TooltipUI.Instance.ShowTooltip(
+                    item.ItemName,
+                    description,
+                    item.Value,
+                    slotTransform
+                );
+            }
+        }
+        else if (item.Type == InventoryItem.ItemType.Crop)
+        {
+            CropData cropData = CropManager.Instance.GetCropData(item.ItemId);
+            if (cropData != null)
+            {
+                TooltipUI.Instance.ShowTooltip(
+                    item.ItemName,
+                    cropData.GetDescription(),
+                    item.Value,
+                    slotTransform
+                );
+            }
+        }
         else
         {
             TooltipUI.Instance.ShowTooltip(
                 item.ItemName,
-                "",
+                $"Quantity: {item.Quantity}",
                 item.Value,
                 slotTransform
             );

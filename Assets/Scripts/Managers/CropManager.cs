@@ -7,6 +7,8 @@ public class CropData
     [Header("Basic Info")]
     public string CropId;
     public string CropName;
+    [TextArea(3, 5)]
+    public string Description;
     
     [Header("Visuals")]
     public GameObject CropPrefab;
@@ -29,6 +31,13 @@ public class CropData
     public float TimePerStage = 0.5f;
     [Range(0.1f, 1f)]
     public float WaterConsumptionPerDay = 0.2f;
+
+    public string GetDescription()
+    {
+        return $"{Description}\nGrowth Time: {GrowthStages * TimePerStage:F1} minutes\n" +
+               $"Water Needs: {WaterConsumptionPerDay * 100:F0}% per day\n" +
+               $"Sell Price: ${BaseValue:F2}";
+    }
 }
 
 public class CropManager : MonoBehaviour

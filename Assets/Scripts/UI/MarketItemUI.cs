@@ -153,10 +153,19 @@ public class MarketItemUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         }
         else if (_item.Type == InventoryItem.ItemType.Seed)
         {
-            CropData cropData = CropManager.Instance.GetCropData(_item.ItemId.Replace("_seed", ""));
+            string cropId = _item.ItemId.Replace("_seed", "");
+            CropData cropData = CropManager.Instance.GetCropData(cropId);
             if (cropData != null)
             {
-                //description = $"Growth Time: {cropData.GrowthTime} days\nSell Price: ${cropData.BaseValue:F2}";
+                description = $"Plant this to grow {cropData.CropName}.\n\n" + cropData.GetDescription();
+            }
+        }
+        else if (_item.Type == InventoryItem.ItemType.Crop)
+        {
+            CropData cropData = CropManager.Instance.GetCropData(_item.ItemId);
+            if (cropData != null)
+            {
+                description = cropData.GetDescription();
             }
         }
 
