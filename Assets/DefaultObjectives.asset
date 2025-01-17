@@ -13,22 +13,28 @@ MonoBehaviour:
   m_Name: DefaultObjectives
   m_EditorClassIdentifier: 
   InitialMoneyObjectives:
-  - Id: earn_10
+  - Id: earn_25
     Title: First Profits
-    Description: Start your farming business by earning your first $10
+    Description: Start your farming business by earning your first $25
     Reward: 15
-    TargetMoney: 10
+    TargetMoney: 25
   InitialCropObjectives:
   - Id: harvest_5
     Title: Beginning Farmer
     Description: Start your farming journey by harvesting 5 crops.
-    Reward: 25
+    Reward: 15
     TargetCount: 5
+  InitialPlantingObjectives:
+  - Id: plant_1
+    Title: Beginner
+    Description: Plant a crop to start your carreer.
+    Reward: 5
+    TargetCount: 1
   FollowUpObjectives:
   - TriggerObjectiveId: harvest_5
     NewObjective:
       rid: 5780440875123081219
-  - TriggerObjectiveId: earn_10
+  - TriggerObjectiveId: earn_25
     NewObjective:
       rid: 5780440875123081220
   references:
@@ -45,8 +51,8 @@ MonoBehaviour:
     - rid: 5780440875123081220
       type: {class: MoneyObjectiveConfig, ns: , asm: Assembly-CSharp}
       data:
-        Id: earn_50
+        Id: earn_100
         Title: Small Business
-        Description: Grow your farm's income to $50
-        Reward: 40
-        TargetMoney: 50
+        Description: Grow your farm's income to $100
+        Reward: 50
+        TargetMoney: 100

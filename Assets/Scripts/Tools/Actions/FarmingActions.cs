@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class FarmingActions : MonoBehaviour
 {
+    public static event System.Action OnPlantingComplete;
+
     private ToolAttributes _attributes;
     
     public void Initialize(ToolAttributes attributes)
@@ -26,6 +28,7 @@ public class FarmingActions : MonoBehaviour
         if (newCrop != null)
         {
             newCrop.InitializeFromData(cropData);
+            OnPlantingComplete?.Invoke();
         }
         
         InventorySystem.Instance.RemoveItem(selectedSeed.ItemId);

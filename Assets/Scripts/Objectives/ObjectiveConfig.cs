@@ -21,3 +21,9 @@ public class CropObjectiveConfig : ObjectiveConfig
 {
     public int TargetCount;
 }
+
+[System.Serializable]
+public class PlantingObjectiveConfig : ObjectiveConfig
+{
+    public int TargetCount;
+}

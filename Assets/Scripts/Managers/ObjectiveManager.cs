@@ -46,6 +46,12 @@ public class ObjectiveManager : MonoBehaviour
         {
             AddObjective(CreateObjectiveFromConfig(config));
         }
+
+        // Add this section for planting objectives
+        foreach (var config in _objectiveDatabase.InitialPlantingObjectives)
+        {
+            AddObjective(CreateObjectiveFromConfig(config));
+        }
     }
     
     private void Update()
@@ -106,6 +112,15 @@ public class ObjectiveManager : MonoBehaviour
                     cropConfig.Description ?? $"Harvest {cropConfig.TargetCount} crops",
                     cropConfig.TargetCount,
                     cropConfig.Reward
+                );
+                
+            case PlantingObjectiveConfig plantConfig:
+                return new PlantingObjective(
+                    plantConfig.Id,
+                    plantConfig.Title,
+                    plantConfig.Description ?? $"Plant {plantConfig.TargetCount} seeds",
+                    plantConfig.TargetCount,
+                    plantConfig.Reward
                 );
                 
             default:
