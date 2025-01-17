@@ -47,8 +47,12 @@ public class ObjectiveManager : MonoBehaviour
             AddObjective(CreateObjectiveFromConfig(config));
         }
 
-        // Add this section for planting objectives
         foreach (var config in _objectiveDatabase.InitialPlantingObjectives)
+        {
+            AddObjective(CreateObjectiveFromConfig(config));
+        }
+
+        foreach (var config in _objectiveDatabase.InitialWateringObjectives)
         {
             AddObjective(CreateObjectiveFromConfig(config));
         }
@@ -121,6 +125,15 @@ public class ObjectiveManager : MonoBehaviour
                     plantConfig.Description ?? $"Plant {plantConfig.TargetCount} seeds",
                     plantConfig.TargetCount,
                     plantConfig.Reward
+                );
+                
+            case WateringObjectiveConfig waterConfig:
+                return new WateringObjective(
+                    waterConfig.Id,
+                    waterConfig.Title,
+                    waterConfig.Description ?? $"Water plants {waterConfig.TargetCount} times",
+                    waterConfig.TargetCount,
+                    waterConfig.Reward
                 );
                 
             default:

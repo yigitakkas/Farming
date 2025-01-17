@@ -3,6 +3,7 @@ using UnityEngine;
 public class FarmingActions : MonoBehaviour
 {
     public static event System.Action OnPlantingComplete;
+    public static event System.Action OnWateringComplete;
 
     private ToolAttributes _attributes;
     
@@ -52,6 +53,7 @@ public class FarmingActions : MonoBehaviour
         if (crop == null) return;
         
         crop.Water();
+        OnWateringComplete?.Invoke();
         
         if (waterParticles != null)
         {

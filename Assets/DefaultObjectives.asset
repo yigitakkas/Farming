@@ -26,8 +26,14 @@ MonoBehaviour:
     TargetCount: 5
   InitialPlantingObjectives:
   - Id: plant_1
-    Title: Beginner
+    Title: Beginner Planter
     Description: Plant a crop to start your carreer.
+    Reward: 5
+    TargetCount: 1
+  InitialWateringObjectives:
+  - Id: water_1
+    Title: Water It
+    Description: Water a plant for it to grow.
     Reward: 5
     TargetCount: 1
   FollowUpObjectives:

@@ -27,3 +27,9 @@ public class PlantingObjectiveConfig : ObjectiveConfig
 {
     public int TargetCount;
 }
+
+[System.Serializable]
+public class WateringObjectiveConfig : ObjectiveConfig
+{
+    public int TargetCount;
+}
