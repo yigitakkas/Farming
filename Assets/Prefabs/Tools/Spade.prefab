@@ -56,6 +56,7 @@ MonoBehaviour:
     GrowthTimeMultiplier: 1
     WaterConsumptionMultiplier: 1
     HarvestQuantityMultiplier: 1
+  _description: A basic spade.
   ToolType: 3
   PlantingLayer:
     serializedVersion: 2

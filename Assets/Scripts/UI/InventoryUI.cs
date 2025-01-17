@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class InventoryUI : MonoBehaviour
 {
@@ -11,12 +12,13 @@ public class InventoryUI : MonoBehaviour
     
     [Header("Selection Colors")]
     [SerializeField] private Color _selectedColor = new Color(0.7f, 1f, 0.7f, 1f); // Light green
-    [SerializeField] private Color _normalColor = Color.white;
+    [SerializeField] private Color _normalColor;
     
     private List<GameObject> _slotObjects = new List<GameObject>();
     
     private void Start()
     {
+        _normalColor = _itemSlotPrefab.GetComponent<Image>().color;
         UpdateInventoryUI();
         InventorySystem.Instance.OnInventoryChanged += UpdateInventoryUI;
         InventorySystem.Instance.OnSeedSelected += UpdateSelectedSeedVisual;
@@ -46,6 +48,7 @@ public class InventoryUI : MonoBehaviour
             if (i < InventorySystem.Instance.Items.Count)
             {
                 InventoryItem item = InventorySystem.Instance.Items[i];
+                RectTransform slotTransform = slot.GetComponent<RectTransform>();
                 
                 // Set item data
                 if (iconImage != null)
@@ -78,6 +81,11 @@ public class InventoryUI : MonoBehaviour
                     bool isSelected = item == InventorySystem.Instance.GetSelectedSeed();
                     slotBackground.color = isSelected ? _selectedColor : _normalColor;
                 }
+                
+                // Add tooltip triggers
+                var pointerHandler = slot.AddComponent<PointerHandler>();
+                pointerHandler.OnPointerEnterEvent += () => ShowItemTooltip(item, slotTransform);
+                pointerHandler.OnPointerExitEvent += () => TooltipUI.Instance.HideTooltip();
             }
             else
             {
@@ -125,6 +133,50 @@ public class InventoryUI : MonoBehaviour
         {
             InventorySystem.Instance.OnInventoryChanged -= UpdateInventoryUI;
             InventorySystem.Instance.OnSeedSelected -= UpdateSelectedSeedVisual;
+        }
+    }
+    
+    private void ShowItemTooltip(InventoryItem item, RectTransform slotTransform)
+    {
+        if (item.Type == InventoryItem.ItemType.Tool)
+        {
+            Tool toolData = InventorySystem.Instance.GetToolPrefab(item.ItemId)?.GetComponent<Tool>();
+            if (toolData != null)
+            {
+                string description = toolData.GetDescription();
+                TooltipUI.Instance.ShowTooltip(
+                    item.ItemName,
+                    description,
+                    item.Value,
+                    slotTransform
+                );
+            }
+        }
+        else
+        {
+            TooltipUI.Instance.ShowTooltip(
+                item.ItemName,
+                "",
+                item.Value,
+                slotTransform
+            );
+        }
+    }
+
+    // Add this helper class
+    private class PointerHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    {
+        public event System.Action OnPointerEnterEvent;
+        public event System.Action OnPointerExitEvent;
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            OnPointerEnterEvent?.Invoke();
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            OnPointerExitEvent?.Invoke();
         }
     }
 } 

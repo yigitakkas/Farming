@@ -21,6 +21,16 @@ public abstract class Tool : MonoBehaviour
     protected bool _canUse = true;
     protected float _useTimer;
     
+    [TextArea(3, 5)]
+    [SerializeField] private string _description;
+    
+    public string GetDescription()
+    {
+        string desc = _description;
+            
+        return desc;
+    }
+    
     public virtual void OnEquip()
     {
         gameObject.SetActive(true);
