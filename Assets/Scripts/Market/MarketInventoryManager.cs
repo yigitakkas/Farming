@@ -11,6 +11,16 @@ public class MarketInventoryManager : MonoBehaviour
     [SerializeField] private List<MarketItemData> _marketStock = new List<MarketItemData>();
     private List<InventoryItem> _shopItems = new List<InventoryItem>();
     
+    public Transform BuyContainer => _buyItemContainer;
+    public Transform SellContainer => _sellItemContainer;
+    
+    public static MarketInventoryManager Instance { get; private set; }
+    
+    private void Awake()
+    {
+        Instance = this;
+    }
+    
     private void Start()
     {
         InitializeShopItems();

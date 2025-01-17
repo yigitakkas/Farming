@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
-public class MarketItemUI : MonoBehaviour
+public class MarketItemUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("UI Elements")]
     public Image ItemIcon;
@@ -135,5 +136,41 @@ public class MarketItemUI : MonoBehaviour
                 GameManager.Instance.AddMoney(-_item.Value);
             }
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (_item == null) return;
+
+        string description = "";
+        if (_item.Type == InventoryItem.ItemType.Tool)
+        {
+            Tool toolData = InventorySystem.Instance.GetToolPrefab(_item.ItemId)?.GetComponent<Tool>();
+            if (toolData != null)
+            {
+                description = toolData.GetDescription();
+            }
+        }
+        else if (_item.Type == InventoryItem.ItemType.Seed)
+        {
+            CropData cropData = CropManager.Instance.GetCropData(_item.ItemId.Replace("_seed", ""));
+            if (cropData != null)
+            {
+                //description = $"Growth Time: {cropData.GrowthTime} days\nSell Price: ${cropData.BaseValue:F2}";
+            }
+        }
+
+        float price = _isBuyMode ? _item.Value : _item.Value * _item.SellMultiplier;
+        TooltipUI.Instance.ShowTooltip(
+            _item.ItemName,
+            description,
+            price,
+            GetComponent<RectTransform>()
+        );
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        TooltipUI.Instance.HideTooltip();
     }
 } 
