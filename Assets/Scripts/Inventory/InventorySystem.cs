@@ -227,6 +227,7 @@ public class InventorySystem : MonoBehaviour
         IsInventoryOpen = false;
         _inventoryPanel.SetActive(false);
         GameManager.Instance.ResumeGame();
+        TooltipUI.Instance.HideTooltip();
     }
     
     public void ClearInventory()

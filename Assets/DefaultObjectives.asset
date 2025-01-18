@@ -12,53 +12,93 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e45bbaffe8facd469e24eee11c12cc1, type: 3}
   m_Name: DefaultObjectives
   m_EditorClassIdentifier: 
-  InitialMoneyObjectives:
-  - Id: earn_25
-    Title: First Profits
-    Description: Start your farming business by earning your first $25
-    Reward: 15
-    TargetMoney: 25
-  InitialCropObjectives:
-  - Id: harvest_5
-    Title: Beginning Farmer
-    Description: Start your farming journey by harvesting 5 crops.
-    Reward: 15
-    TargetCount: 5
+  InitialMoneyObjectives: []
+  InitialCropObjectives: []
   InitialPlantingObjectives:
   - Id: plant_1
-    Title: Beginner Planter
-    Description: Plant a crop to start your carreer.
+    Title: Plant For the Future
+    Description: Plant a crop with your spade to start your carreer.
     Reward: 5
     TargetCount: 1
-  InitialWateringObjectives:
-  - Id: water_1
-    Title: Water It
-    Description: Water a plant for it to grow.
-    Reward: 5
-    TargetCount: 1
+  InitialWateringObjectives: []
   FollowUpObjectives:
-  - TriggerObjectiveId: harvest_5
+  - TriggerObjectiveId: plant_1
     NewObjective:
-      rid: 5780440875123081219
-  - TriggerObjectiveId: earn_25
+      rid: 5780440907465621507
+  - TriggerObjectiveId: water_1
     NewObjective:
-      rid: 5780440875123081220
+      rid: 5780440907465621509
+  - TriggerObjectiveId: crop_1
+    NewObjective:
+      rid: 5780440907465621510
+  - TriggerObjectiveId: crop_1
+    NewObjective:
+      rid: 5780440907465621516
+  - TriggerObjectiveId: money_25
+    NewObjective:
+      rid: 5780440907465621514
+  - TriggerObjectiveId: money_100
+    NewObjective:
+      rid: 5780440907465621518
+  - TriggerObjectiveId: crop_1
+    NewObjective:
+      rid: 5780440907465621517
   references:
     version: 2
     RefIds:
-    - rid: 5780440875123081219
+    - rid: 5780440907465621507
+      type: {class: WateringObjectiveConfig, ns: , asm: Assembly-CSharp}
+      data:
+        Id: water_1
+        Title: Feed It Beans
+        Description: Water a plant with a bucket for it to grow.
+        Reward: 5
+        TargetCount: 1
+    - rid: 5780440907465621509
       type: {class: CropObjectiveConfig, ns: , asm: Assembly-CSharp}
       data:
-        Id: harvest_15
-        Title: Growing Farm
-        Description: Expand your farm by harvesting 15 crops
-        Reward: 40
-        TargetCount: 15
-    - rid: 5780440875123081220
+        Id: crop_1
+        Title: First Harvest
+        Description: Harvest your first grown up plant with your spade!
+        Reward: 10
+        TargetCount: 1
+    - rid: 5780440907465621510
       type: {class: MoneyObjectiveConfig, ns: , asm: Assembly-CSharp}
       data:
-        Id: earn_100
+        Id: money_25
+        Title: First Profits
+        Description: Sell your harvests in market to make your first profits.
+        Reward: 10
+        TargetMoney: 25
+    - rid: 5780440907465621514
+      type: {class: MoneyObjectiveConfig, ns: , asm: Assembly-CSharp}
+      data:
+        Id: money_100
         Title: Small Business
-        Description: Grow your farm's income to $100
-        Reward: 50
+        Description: Earn $100 to tell your friends about it.
+        Reward: 25
         TargetMoney: 100
+    - rid: 5780440907465621516
+      type: {class: CropObjectiveConfig, ns: , asm: Assembly-CSharp}
+      data:
+        Id: crop_10
+        Title: Getting the Hang of it
+        Description: Harvest 10 plants so that you have some sample products.
+        Reward: 10
+        TargetCount: 10
+    - rid: 5780440907465621517
+      type: {class: PlantingObjectiveConfig, ns: , asm: Assembly-CSharp}
+      data:
+        Id: plant_10
+        Title: Investing On
+        Description: Plant 10 crops so that it looks beautiful.
+        Reward: 15
+        TargetCount: 10
+    - rid: 5780440907465621518
+      type: {class: MoneyObjectiveConfig, ns: , asm: Assembly-CSharp}
+      data:
+        Id: money_250
+        Title: Rich Gets Richer
+        Description: Earn $250 so you can buy some designer clothes.
+        Reward: 50
+        TargetMoney: 250

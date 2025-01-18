@@ -8,7 +8,9 @@ public class FollowUpObjectiveDrawer : PropertyDrawer
     private enum ObjectiveType
     {
         Money,
-        Crop
+        Crop,
+        Planting,
+        Watering
     }
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -23,21 +25,27 @@ public class FollowUpObjectiveDrawer : PropertyDrawer
             position.width, EditorGUIUtility.singleLineHeight);
             
         var newObjectiveProp = property.FindPropertyRelative("NewObjective");
-        bool isMoney = newObjectiveProp.managedReferenceValue is MoneyObjectiveConfig;
-        ObjectiveType currentType = isMoney ? ObjectiveType.Money : ObjectiveType.Crop;
+        ObjectiveType currentType = GetCurrentObjectiveType(newObjectiveProp);
         
         EditorGUI.BeginChangeCheck();
         var selectedType = (ObjectiveType)EditorGUI.EnumPopup(typeRect, "New Objective Type", currentType);
         if (EditorGUI.EndChangeCheck())
         {
             // Create new objective config based on selected type
-            if (selectedType == ObjectiveType.Money)
+            switch (selectedType)
             {
-                newObjectiveProp.managedReferenceValue = new MoneyObjectiveConfig();
-            }
-            else
-            {
-                newObjectiveProp.managedReferenceValue = new CropObjectiveConfig();
+                case ObjectiveType.Money:
+                    newObjectiveProp.managedReferenceValue = new MoneyObjectiveConfig();
+                    break;
+                case ObjectiveType.Crop:
+                    newObjectiveProp.managedReferenceValue = new CropObjectiveConfig();
+                    break;
+                case ObjectiveType.Planting:
+                    newObjectiveProp.managedReferenceValue = new PlantingObjectiveConfig();
+                    break;
+                case ObjectiveType.Watering:
+                    newObjectiveProp.managedReferenceValue = new WateringObjectiveConfig();
+                    break;
             }
         }
 
@@ -76,6 +84,15 @@ public class FollowUpObjectiveDrawer : PropertyDrawer
         }
 
         EditorGUI.EndProperty();
+    }
+
+    private ObjectiveType GetCurrentObjectiveType(SerializedProperty objectiveProp)
+    {
+        if (objectiveProp.managedReferenceValue is MoneyObjectiveConfig) return ObjectiveType.Money;
+        if (objectiveProp.managedReferenceValue is CropObjectiveConfig) return ObjectiveType.Crop;
+        if (objectiveProp.managedReferenceValue is PlantingObjectiveConfig) return ObjectiveType.Planting;
+        if (objectiveProp.managedReferenceValue is WateringObjectiveConfig) return ObjectiveType.Watering;
+        return ObjectiveType.Money; // Default
     }
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)

@@ -57,5 +57,7 @@ public class Market : MonoBehaviour, IInteractable
     {
         _marketPanel.SetActive(false);
         _state.Close();
+        GameManager.Instance.ResumeGame();
+        TooltipUI.Instance.HideTooltip();
     }
 } 

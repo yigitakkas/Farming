@@ -83,10 +83,17 @@ public class ObjectiveManager : MonoBehaviour
     
     private void AddFollowUpObjective(string completedObjectiveId)
     {
-        var followUp = _objectiveDatabase.FollowUpObjectives.Find(f => f.TriggerObjectiveId == completedObjectiveId);
-        if (followUp != null)
+        // Find all follow-up objectives that match the completed objective ID
+        var followUps = _objectiveDatabase.FollowUpObjectives
+            .FindAll(f => f.TriggerObjectiveId == completedObjectiveId);
+        
+        // Add all matching follow-up objectives
+        foreach (var followUp in followUps)
         {
-            AddObjective(CreateObjectiveFromConfig(followUp.NewObjective));
+            if (followUp != null)
+            {
+                AddObjective(CreateObjectiveFromConfig(followUp.NewObjective));
+            }
         }
     }
     

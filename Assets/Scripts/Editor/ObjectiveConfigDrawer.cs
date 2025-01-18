@@ -8,7 +8,9 @@ public class ObjectiveConfigDrawer : PropertyDrawer
     private enum ObjectiveType
     {
         Money,
-        Crop
+        Crop,
+        Planting,
+        Watering
     }
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -33,17 +35,21 @@ public class ObjectiveConfigDrawer : PropertyDrawer
         var rewardRect = new Rect(position.x, position.y + yOffset, position.width, EditorGUIUtility.singleLineHeight);
         EditorGUI.PropertyField(rewardRect, property.FindPropertyRelative("Reward"));
         
-        if (objectiveType == ObjectiveType.Money)
+        switch (objectiveType)
         {
-            yOffset += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-            var targetMoneyRect = new Rect(position.x, position.y + yOffset, position.width, EditorGUIUtility.singleLineHeight);
-            EditorGUI.PropertyField(targetMoneyRect, property.FindPropertyRelative("TargetMoney"));
-        }
-        else
-        {
-            yOffset += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-            var targetCountRect = new Rect(position.x, position.y + yOffset, position.width, EditorGUIUtility.singleLineHeight);
-            EditorGUI.PropertyField(targetCountRect, property.FindPropertyRelative("TargetCount"));
+            case ObjectiveType.Money:
+                yOffset += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                var targetMoneyRect = new Rect(position.x, position.y + yOffset, position.width, EditorGUIUtility.singleLineHeight);
+                EditorGUI.PropertyField(targetMoneyRect, property.FindPropertyRelative("TargetMoney"));
+                break;
+                
+            case ObjectiveType.Crop:
+            case ObjectiveType.Planting:
+            case ObjectiveType.Watering:
+                yOffset += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                var targetCountRect = new Rect(position.x, position.y + yOffset, position.width, EditorGUIUtility.singleLineHeight);
+                EditorGUI.PropertyField(targetCountRect, property.FindPropertyRelative("TargetCount"));
+                break;
         }
         
         EditorGUI.EndProperty();

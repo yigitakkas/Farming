@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.40087944, g: 0.39709166, b: 0.3987957, a: 1}
+  m_IndirectSpecularColor: {r: 0.4716727, g: 0.47534603, b: 0.48357415, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2559,7 +2559,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 460, y: -96.666664}
+  m_AnchoredPosition: {x: 460, y: -96.666504}
   m_SizeDelta: {x: 700, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &575730323
@@ -3808,23 +3808,11 @@ MonoBehaviour:
   _startingItems:
   - SourceType: 1
     ItemPrefab: {fileID: 0}
-    CropId: carrot
-    StartingQuantity: 5
-  - SourceType: 1
-    ItemPrefab: {fileID: 0}
     CropId: broccoli
-    StartingQuantity: 5
-  - SourceType: 1
-    ItemPrefab: {fileID: 0}
-    CropId: pepper
     StartingQuantity: 5
   - SourceType: 0
     ItemPrefab: {fileID: 2305325346606390186, guid: ad931eeb64d20504fbe536564e9f9790, type: 3}
     CropId: 
-    StartingQuantity: 1
-  - SourceType: 2
-    ItemPrefab: {fileID: 0}
-    CropId: broccoli
     StartingQuantity: 1
   - SourceType: 0
     ItemPrefab: {fileID: 2305325346606390186, guid: 2bc58f5c1cc8a6b47aed1e38f685c7c6, type: 3}
@@ -8183,7 +8171,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 460, y: -168.33333}
+  m_AnchoredPosition: {x: 460, y: -168.3335}
   m_SizeDelta: {x: 700, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1941369472
