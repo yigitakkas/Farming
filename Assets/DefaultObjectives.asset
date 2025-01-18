@@ -16,8 +16,8 @@ MonoBehaviour:
   InitialCropObjectives: []
   InitialPlantingObjectives:
   - Id: plant_1
-    Title: Plant For the Future
-    Description: Plant a crop with your spade to start your carreer.
+    Title: PLANT FOR THE FUTURE
+    Description: Pick a seed and plant a crop with your spade to start your carreer.
     Reward: 5
     TargetCount: 1
   InitialWateringObjectives: []
@@ -50,7 +50,7 @@ MonoBehaviour:
       type: {class: WateringObjectiveConfig, ns: , asm: Assembly-CSharp}
       data:
         Id: water_1
-        Title: Feed It Beans
+        Title: FEED IT BEANS
         Description: Water a plant with a bucket for it to grow.
         Reward: 5
         TargetCount: 1
@@ -58,7 +58,7 @@ MonoBehaviour:
       type: {class: CropObjectiveConfig, ns: , asm: Assembly-CSharp}
       data:
         Id: crop_1
-        Title: First Harvest
+        Title: FIRST HARVEST
         Description: Harvest your first grown up plant with your spade!
         Reward: 10
         TargetCount: 1
@@ -66,7 +66,7 @@ MonoBehaviour:
       type: {class: MoneyObjectiveConfig, ns: , asm: Assembly-CSharp}
       data:
         Id: money_25
-        Title: First Profits
+        Title: FIRST PROFITS
         Description: Sell your harvests in market to make your first profits.
         Reward: 10
         TargetMoney: 25
@@ -74,7 +74,7 @@ MonoBehaviour:
       type: {class: MoneyObjectiveConfig, ns: , asm: Assembly-CSharp}
       data:
         Id: money_100
-        Title: Small Business
+        Title: SMALL BUSINESS
         Description: Earn $100 to tell your friends about it.
         Reward: 25
         TargetMoney: 100
@@ -82,7 +82,7 @@ MonoBehaviour:
       type: {class: CropObjectiveConfig, ns: , asm: Assembly-CSharp}
       data:
         Id: crop_10
-        Title: Getting the Hang of it
+        Title: GETTING THE HANG OF IT
         Description: Harvest 10 plants so that you have some sample products.
         Reward: 10
         TargetCount: 10
@@ -90,7 +90,7 @@ MonoBehaviour:
       type: {class: PlantingObjectiveConfig, ns: , asm: Assembly-CSharp}
       data:
         Id: plant_10
-        Title: Investing On
+        Title: INVESTING ON
         Description: Plant 10 crops so that it looks beautiful.
         Reward: 15
         TargetCount: 10
@@ -98,7 +98,7 @@ MonoBehaviour:
       type: {class: MoneyObjectiveConfig, ns: , asm: Assembly-CSharp}
       data:
         Id: money_250
-        Title: Rich Gets Richer
+        Title: RICH GET RICHER
         Description: Earn $250 so you can buy some designer clothes.
         Reward: 50
         TargetMoney: 250

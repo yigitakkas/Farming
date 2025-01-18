@@ -31,7 +31,7 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] private GameObject _errorMessagePrefab;
     
     [Header("Interaction")]
-    [SerializeField] private GameObject _interactionPromptPrefab;
+    [SerializeField] private GameObject _marketPromptPrefab;
     private GameObject _currentPrompt;
     private IInteractable _currentInteractable;
     
@@ -50,9 +50,9 @@ public class PlayerInteraction : MonoBehaviour
         // Initialize tools from inventory instead of ToolPrefabs
         InstantiateToolsFromInventory();
 
-        if (_interactionPromptPrefab != null)
+        if (_marketPromptPrefab != null)
         {
-            _currentPrompt = Instantiate(_interactionPromptPrefab);
+            _currentPrompt = Instantiate(_marketPromptPrefab);
             _currentPrompt.SetActive(false);
         }
 
@@ -230,12 +230,12 @@ public class PlayerInteraction : MonoBehaviour
         foreach (var hitCollider in hitColliders)
         {
             IInteractable interactable = hitCollider.GetComponent<IInteractable>();
-            if (interactable != null)
+            if (interactable != null && !(interactable is Home))
             {
                 foundInteractable = true;
                 _currentInteractable = interactable;
                 
-                // Show prompt at the interactable object's position
+                // Show appropriate prompt based on interactable type
                 if (_currentPrompt != null)
                 {
                     _currentPrompt.SetActive(true);

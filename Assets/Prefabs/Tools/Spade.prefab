@@ -51,12 +51,12 @@ MonoBehaviour:
   UseRange: 2
   UseDelay: 0.2
   _toolIcon: {fileID: 21300000, guid: e2e5feefb781d2f4bb0aea556d3036d9, type: 3}
-  BaseValue: 25
+  BaseValue: 20
   _attributes:
     GrowthTimeMultiplier: 1
     WaterConsumptionMultiplier: 1
     HarvestQuantityMultiplier: 1
-  _description: A basic spade.
+  _description: Cultivator Tool. Can do planting and harvesting at a basic level.
   ToolType: 3
   PlantingLayer:
     serializedVersion: 2

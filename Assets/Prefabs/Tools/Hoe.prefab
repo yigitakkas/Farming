@@ -51,13 +51,14 @@ MonoBehaviour:
   UseRange: 2
   UseDelay: 0.2
   _toolIcon: {fileID: 21300000, guid: 16926bc5f7cfd244a8f12affac9dea58, type: 3}
-  BaseValue: 50
+  BaseValue: 35
   _attributes:
-    GrowthTimeMultiplier: 1
+    GrowthTimeMultiplier: 0.7
     WaterConsumptionMultiplier: 1
-    HarvestQuantityMultiplier: 2
-  _description: This tool especially excels at harvesting.
-  ToolType: 1
+    HarvestQuantityMultiplier: 1
+  _description: 'Planting Tool. Effect: Speeds up Crop Growth by %30. The hoe creates
+    furrows for seeds, ensuring optimal soil conditions for faster growth.'
+  ToolType: 0
   PlantingLayer:
     serializedVersion: 2
     m_Bits: 512

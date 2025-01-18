@@ -49,7 +49,7 @@ MonoBehaviour:
   MediumModelPrefab: {fileID: 1301175983816860, guid: 26239641aebea554d8322e56aeb9d3fa, type: 3}
   LargeModelPrefab: {fileID: 1000244816479596, guid: d5b77212d892ff6468be453c8834d9b9, type: 3}
   WaterReminderPrefab: {fileID: 5862352020556860747, guid: 9f2eef767b9b6fe45904d27a4ed9f3f4, type: 3}
-  CurrentGrowthTime: 12
+  CurrentGrowthTime: 0
   CurrentStage: 0
   _waterLevel: 0
   _maxWaterLevel: 1

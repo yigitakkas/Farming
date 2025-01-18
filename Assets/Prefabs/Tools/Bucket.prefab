@@ -56,7 +56,7 @@ MonoBehaviour:
     GrowthTimeMultiplier: 1
     WaterConsumptionMultiplier: 1
     HarvestQuantityMultiplier: 1
-  _description: A basic bucket to water your plants.
+  _description: Watering Tool. Basic bucket to water your plants.
   ToolType: 2
   PlantingLayer:
     serializedVersion: 2

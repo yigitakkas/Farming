@@ -122,32 +122,31 @@ public class Crop : MonoBehaviour, IInteractable
     {
         if (!GameManager.Instance.IsGamePaused)
         {
-            if (IsWatered)
+            // One real minute = (24 * 60) / RealMinutesPerDay game minutes
+            float gameMinutesPerRealMinute = (24f * 60f) / TimeManager.Instance.RealMinutesPerDay;
+            
+            // Convert to minutes per frame
+            float minutesThisFrame = (Time.deltaTime / 60f) * gameMinutesPerRealMinute;
+            
+            // Only grow if watered
+            if (_waterLevel > 0)
             {
-                // Grow only when watered
-                float growthProgress = Time.deltaTime / TimeManager.Instance.RealSecondsPerDay;
-                CurrentGrowthTime += growthProgress;
+                CurrentGrowthTime += minutesThisFrame;
                 
-                // Consume water
-                float waterUsed = _waterConsumptionPerDay * (Time.deltaTime / TimeManager.Instance.RealSecondsPerDay);
-                _waterLevel = Mathf.Max(0f, _waterLevel - waterUsed);
-                
-                // Update growth stage if needed
-                if (CurrentGrowthTime >= _timePerStage)
+                // Check if we should advance to next stage
+                if (CurrentGrowthTime >= _timePerStage && CurrentStage < _growthStages - 1)
                 {
-                    CurrentGrowthTime = 0;
                     CurrentStage++;
-                    
-                    if (CurrentStage >= _growthStages)
-                    {
-                        CurrentStage = _growthStages - 1;
-                    }
-                    
+                    CurrentGrowthTime = 0;
                     UpdateVisuals();
                 }
             }
+
+            // Handle water consumption
+            float waterLossPerFrame = (_waterConsumptionPerDay * minutesThisFrame) / (24f * 60f);
+            _waterLevel = Mathf.Max(0, _waterLevel - waterLossPerFrame);
             
-            // Always update visuals for water state
+            // Update water reminder
             UpdateWaterVisuals();
         }
     }

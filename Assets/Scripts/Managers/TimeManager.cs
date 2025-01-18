@@ -55,6 +55,12 @@ public class TimeManager : MonoBehaviour
     private Color _currentSkyboxTint;
     private float _currentAtmosphereThickness;
     
+    public float RealMinutesPerDay 
+    { 
+        get => _realMinutesPerDay;
+        set => _realMinutesPerDay = value;
+    }
+    
     private void Awake()
     {
         if (Instance == null)
@@ -167,5 +173,25 @@ public class TimeManager : MonoBehaviour
             _currentAtmosphereThickness,
             Time.deltaTime * 2f
         ));
+    }
+    
+    public void SetTime(float hour)
+    {
+        CurrentHour = hour;
+        OnHourChanged?.Invoke(CurrentHour);
+        
+        // Update time of day
+        TimeOfDay newTimeOfDay = CurrentTimeOfDay;
+        if (newTimeOfDay != _lastTimeOfDay)
+        {
+            _lastTimeOfDay = newTimeOfDay;
+            OnTimeOfDayChanged?.Invoke(newTimeOfDay);
+        }
+    }
+    
+    public void AdvanceDay()
+    {
+        CurrentDay++;
+        OnDayChanged?.Invoke(CurrentDay);
     }
 } 

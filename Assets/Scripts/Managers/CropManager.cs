@@ -27,16 +27,26 @@ public class CropData
     [Header("Growth Settings")]
     [Range(1, 5)]
     public int GrowthStages = 3;
-    [Tooltip("Time in minutes for each growth stage")]
-    public float TimePerStage = 0.5f;
+    
+    [Tooltip("Time in game minutes for each growth stage (e.g., 60 = 1 game hour)")]
+    public float TimePerStage = 60f;
+    
     [Range(0.1f, 1f)]
     public float WaterConsumptionPerDay = 0.2f;
 
     public string GetDescription()
     {
-        return $"{Description}\nGrowth Time: {GrowthStages * TimePerStage:F1} minutes\n" +
+        float totalHours = (TimePerStage * (GrowthStages - 1)) / 60f;
+        return $"{Description}\nGrowth Time: {totalHours:F1} game hours\n" +
                $"Water Needs: {WaterConsumptionPerDay * 100:F0}% per day\n" +
                $"Sell Price: ${BaseValue:F2}";
+    }
+
+    public float GetTotalGrowthDays()
+    {
+        float totalMinutes = TimePerStage * (GrowthStages - 1);
+        float totalHours = totalMinutes / 60f;
+        return totalHours / 24f;
     }
 }
 
