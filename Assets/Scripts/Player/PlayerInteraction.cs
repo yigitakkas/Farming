@@ -124,6 +124,10 @@ public class PlayerInteraction : MonoBehaviour
     // Processes tool usage when clicking
     private void HandleToolUse()
     {
+        // Don't allow tool use during animations
+        if (_playerController.IsPlayingFarmingAnimation)
+            return;
+
         if (CurrentTool != null)
         {
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -224,6 +228,10 @@ public class PlayerInteraction : MonoBehaviour
     
     private void HandleProximityInteraction()
     {
+        // Don't allow interactions during animations
+        if (_playerController.IsPlayingFarmingAnimation)
+            return;
+
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, InteractionRange, InteractionLayer);
         bool foundInteractable = false;
         

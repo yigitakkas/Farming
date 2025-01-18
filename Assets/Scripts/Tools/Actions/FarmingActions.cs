@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class FarmingActions : MonoBehaviour
 {
@@ -52,13 +53,24 @@ public class FarmingActions : MonoBehaviour
     {
         if (crop == null) return;
         
-        crop.Water();
-        OnWateringComplete?.Invoke();
-        
         if (waterParticles != null)
         {
-            waterParticles.transform.position = crop.transform.position;
+            waterParticles.transform.position = crop.transform.position + Vector3.up * 0.5f;
             waterParticles.Play();
+            
+            StartCoroutine(StopWaterParticles(waterParticles));
+        }
+        
+        crop.Water();
+        OnWateringComplete?.Invoke();
+    }
+    
+    private IEnumerator StopWaterParticles(ParticleSystem particles)
+    {
+        yield return new WaitForSeconds(0.5f);
+        if (particles != null)
+        {
+            particles.Stop();
         }
     }
     

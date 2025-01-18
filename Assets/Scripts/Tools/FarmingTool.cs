@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class FarmingTool : Tool
 {
@@ -28,6 +29,7 @@ public class FarmingTool : Tool
     private HarvestPreview _harvestPreview;
     private WateringPreview _wateringPreview;
     private FarmingActions _actions;
+    private PlayerController _playerController;
     
     private void Start()
     {
@@ -39,6 +41,13 @@ public class FarmingTool : Tool
         _actions.Initialize(_attributes);
         
         InitializePreviews(groundCheck);
+        _playerController = playerController;
+        
+        // Make sure water particles are off at start
+        if (WaterParticles != null)
+        {
+            WaterParticles.Stop();
+        }
     }
     
     private void InitializePreviews(Transform groundCheck)
@@ -122,6 +131,8 @@ public class FarmingTool : Tool
             case FarmingToolType.Planting:
                 if (_plantingPreview?.CanPlantHere ?? false)
                 {
+                    FaceTarget(_plantingPreview.PreviewPosition);
+                    _playerController?.TriggerPlantingAnimation();
                     _actions.HandlePlanting(_plantingPreview.PreviewPosition, 
                         InventorySystem.Instance.GetSelectedSeed());
                 }
@@ -130,6 +141,8 @@ public class FarmingTool : Tool
             case FarmingToolType.Harvesting:
                 if (_harvestPreview?.CanHarvestHere ?? false)
                 {
+                    FaceTarget(_harvestPreview.TargetCrop.transform.position);
+                    _playerController?.TriggerHarvestingAnimation();
                     _actions.HandleHarvesting(_harvestPreview.TargetCrop);
                 }
                 break;
@@ -137,10 +150,12 @@ public class FarmingTool : Tool
             case FarmingToolType.Cultivator:
                 if (_harvestPreview?.CanHarvestHere ?? false)
                 {
+                    _playerController?.TriggerHarvestingAnimation();
                     _actions.HandleHarvesting(_harvestPreview.TargetCrop);
                 }
                 else if (_plantingPreview?.CanPlantHere ?? false)
                 {
+                    _playerController?.TriggerPlantingAnimation();
                     _actions.HandlePlanting(_plantingPreview.PreviewPosition,
                         InventorySystem.Instance.GetSelectedSeed());
                 }
@@ -149,13 +164,32 @@ public class FarmingTool : Tool
             case FarmingToolType.Watering:
                 if (_wateringPreview?.CanWaterHere ?? false)
                 {
-                    _actions.HandleWatering(_wateringPreview.TargetCrop, WaterParticles);
+                    StartCoroutine(HandleWateringEffect(_wateringPreview.TargetCrop));
                 }
                 break;
         }
         
         _canUse = false;
         _useTimer = 0;
+    }
+    
+    private IEnumerator HandleWateringEffect(Crop targetCrop)
+    {
+        if (_playerController != null)
+        {
+            // Make player face the crop
+            Vector3 directionToCrop = (targetCrop.transform.position - _playerController.transform.position).normalized;
+            directionToCrop.y = 0; // Keep rotation only on horizontal plane
+            _playerController.ModelTransform.rotation = Quaternion.LookRotation(directionToCrop);
+
+            _playerController.TriggerWateringAnimation();
+        }
+        
+        // Wait for animation to be roughly halfway
+        yield return new WaitForSeconds(0.5f);
+        
+        // Apply the watering effect
+        _actions.HandleWatering(targetCrop, WaterParticles);
     }
     
     public override void OnEquip()
@@ -180,5 +214,15 @@ public class FarmingTool : Tool
         if (_harvestPreview != null) Destroy(_harvestPreview);
         if (_wateringPreview != null) Destroy(_wateringPreview);
         if (_actions != null) Destroy(_actions);
+    }
+    
+    private void FaceTarget(Vector3 targetPosition)
+    {
+        if (_playerController != null)
+        {
+            Vector3 direction = (targetPosition - _playerController.transform.position).normalized;
+            direction.y = 0;
+            _playerController.ModelTransform.rotation = Quaternion.LookRotation(direction);
+        }
     }
 } 

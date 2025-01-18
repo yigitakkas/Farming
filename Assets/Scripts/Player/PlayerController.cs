@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -23,15 +24,21 @@ public class PlayerController : MonoBehaviour
     private Vector3 _velocity;
     private bool _isGrounded;
     private float _currentSpeed;
+    private bool _isPlayingFarmingAnimation;
+    public bool IsPlayingFarmingAnimation => _isPlayingFarmingAnimation;
     
     // Animator hashes
     private static readonly int IsWalking = Animator.StringToHash("IsWalking");
     private static readonly int IsRunning = Animator.StringToHash("IsRunning");
     private static readonly int Jump = Animator.StringToHash("Jump");
     private static readonly int IsGrounded = Animator.StringToHash("IsGrounded");
+    private static readonly int Planting = Animator.StringToHash("Planting");
+    private static readonly int Harvesting = Animator.StringToHash("Harvesting");
+    private static readonly int Watering = Animator.StringToHash("Watering");
     
     private bool CanMove => !InventorySystem.Instance.IsInventoryOpen && 
-                           !MarketState.Instance.IsOpen;
+                           !MarketState.Instance.IsOpen &&
+                           !_isPlayingFarmingAnimation;
     
     private void Start()
     {
@@ -153,5 +160,43 @@ public class PlayerController : MonoBehaviour
     {
         Animator.SetBool(IsWalking, false);
         Animator.SetBool(IsRunning, false);
+    }
+
+    public void TriggerPlantingAnimation()
+    {
+        StartCoroutine(PlayFarmingAnimation(Planting));
+    }
+
+    public void TriggerHarvestingAnimation()
+    {
+        StartCoroutine(PlayFarmingAnimation(Harvesting));
+    }
+
+    public void TriggerWateringAnimation()
+    {
+        StartCoroutine(PlayFarmingAnimation(Watering));
+    }
+
+    private IEnumerator PlayFarmingAnimation(int triggerHash)
+    {
+        _isPlayingFarmingAnimation = true;
+        Animator.SetTrigger(triggerHash);
+
+        // Wait for current animation to start
+        yield return new WaitForSeconds(0.1f);
+
+        // Wait until we're actually in the farming animation state
+        while (!Animator.GetCurrentAnimatorStateInfo(0).IsTag("Farming"))
+        {
+            yield return null;
+        }
+
+        // Wait for the animation to complete
+        while (Animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+        {
+            yield return null;
+        }
+
+        _isPlayingFarmingAnimation = false;
     }
 } 
