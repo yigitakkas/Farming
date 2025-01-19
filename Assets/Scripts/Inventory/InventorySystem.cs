@@ -219,14 +219,12 @@ public class InventorySystem : MonoBehaviour
     {
         IsInventoryOpen = true;
         _inventoryPanel.SetActive(true);
-        GameManager.Instance.PauseGame();
     }
     
     public void CloseInventory()
     {
         IsInventoryOpen = false;
         _inventoryPanel.SetActive(false);
-        GameManager.Instance.ResumeGame();
         TooltipUI.Instance.HideTooltip();
     }
     

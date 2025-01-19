@@ -150,11 +150,13 @@ public class FarmingTool : Tool
             case FarmingToolType.Cultivator:
                 if (_harvestPreview?.CanHarvestHere ?? false)
                 {
+                    FaceTarget(_harvestPreview.TargetCrop.transform.position);
                     _playerController?.TriggerHarvestingAnimation();
                     _actions.HandleHarvesting(_harvestPreview.TargetCrop);
                 }
                 else if (_plantingPreview?.CanPlantHere ?? false)
                 {
+                    FaceTarget(_plantingPreview.PreviewPosition);
                     _playerController?.TriggerPlantingAnimation();
                     _actions.HandlePlanting(_plantingPreview.PreviewPosition,
                         InventorySystem.Instance.GetSelectedSeed());

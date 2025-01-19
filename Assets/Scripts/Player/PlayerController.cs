@@ -164,6 +164,7 @@ public class PlayerController : MonoBehaviour
 
     public void TriggerPlantingAnimation()
     {
+        if (InventorySystem.Instance.GetSelectedSeed() == null) return;
         StartCoroutine(PlayFarmingAnimation(Planting));
     }
 
