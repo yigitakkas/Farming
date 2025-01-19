@@ -28,6 +28,25 @@ public class GameManager : MonoBehaviour
         }
     }
     
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.buildIndex == 1) // Game scene
+        {
+            _isGamePaused = false;
+            Time.timeScale = 1f;
+        }
+    }
+
     public void PauseGame()
     {
         _isGamePaused = true;

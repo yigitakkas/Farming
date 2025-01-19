@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 public enum TimeOfDay
 {
@@ -197,5 +198,33 @@ public class TimeManager : MonoBehaviour
     {
         CurrentDay++;
         OnDayChanged?.Invoke(CurrentDay);
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.buildIndex == 1) // Game scene
+        {
+            // Reset time state when entering game scene
+            _currentLightRotation = new Vector3((_startHour - 6) * 15f, -30f, 0f);
+            _currentLightIntensity = _defaultLightIntensity;
+            _currentSkyboxTint = _defaultSkyTint;
+            _currentAtmosphereThickness = _defaultAtmosphereThickness;
+
+            // Make sure game is unpaused when starting
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.ResumeGame();
+            }
+        }
     }
 } 
