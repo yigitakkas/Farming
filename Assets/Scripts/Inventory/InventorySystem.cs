@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using UnityEngine.SceneManagement;
 
 public class InventorySystem : MonoBehaviour
 {
@@ -29,7 +30,8 @@ public class InventorySystem : MonoBehaviour
     public bool IsInventoryOpen { get; private set; }
     
     [SerializeField] private GameObject _inventoryPanel;
-    
+    private bool _isPanelReferenceValid => _inventoryPanel != null;
+
     private void Awake()
     {
         if (Instance == null)
@@ -40,6 +42,36 @@ public class InventorySystem : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+    }
+    
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.buildIndex == 1) // Game scene
+        {
+            // Find and assign the inventory panel in the new scene
+            _inventoryPanel = GameObject.FindGameObjectWithTag("InventoryPanel");
+            if (_inventoryPanel == null)
+            {
+                Debug.LogError("Could not find InventoryPanel in scene! Make sure it's tagged properly.");
+            }
+            
+            // Make sure panel starts closed
+            if (_isPanelReferenceValid)
+            {
+                _inventoryPanel.SetActive(false);
+                IsInventoryOpen = false;
+            }
         }
     }
     
@@ -217,12 +249,16 @@ public class InventorySystem : MonoBehaviour
     
     public void OpenInventory()
     {
+        if (!_isPanelReferenceValid) return;
+        
         IsInventoryOpen = true;
         _inventoryPanel.SetActive(true);
     }
     
     public void CloseInventory()
     {
+        if (!_isPanelReferenceValid) return;
+        
         IsInventoryOpen = false;
         _inventoryPanel.SetActive(false);
         TooltipUI.Instance.HideTooltip();

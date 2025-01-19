@@ -25,6 +25,10 @@ public class TimeManager : MonoBehaviour
     [SerializeField] private Light _directionalLight;
     [SerializeField] private Gradient _skyboxColor;
     [SerializeField] private Material _skyboxMaterial;
+
+    private float _defaultLightIntensity = 1.1f;
+    private Color _defaultSkyTint = new Color(0.5f, 0.5f, 0.5f);
+    private float _defaultAtmosphereThickness = 0.6425911f;
     
     public float CurrentHour { get; private set; }
     public int CurrentDay { get; private set; }
@@ -77,9 +81,9 @@ public class TimeManager : MonoBehaviour
         
         // Initialize lighting values
         _currentLightRotation = new Vector3((_startHour - 6) * 15f, -30f, 0f);
-        _currentLightIntensity = _directionalLight.intensity;
-        _currentSkyboxTint = _skyboxMaterial.GetColor("_SkyTint");
-        _currentAtmosphereThickness = _skyboxMaterial.GetFloat("_AtmosphereThickness");
+        _currentLightIntensity = _defaultLightIntensity;
+        _currentSkyboxTint = _defaultSkyTint;
+        _currentAtmosphereThickness = _defaultAtmosphereThickness;
     }
     
     private void Update()
