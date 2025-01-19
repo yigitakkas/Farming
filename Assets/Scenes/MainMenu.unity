@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.43689013, g: 0.43592796, b: 0.43927646, a: 1}
+  m_IndirectSpecularColor: {r: 0.43408594, g: 0.43293262, b: 0.43616927, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1538,7 +1538,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5691ee23b298a124c95e69df6e5e55bf, type: 3}
   - {fileID: 8300000, guid: 9c8a6ec92e6088e48955e4538d6a6534, type: 3}
   - {fileID: 8300000, guid: 580332109bdb43543867acb6a6c87f86, type: 3}
-  - {fileID: 8300000, guid: 811a58230a054b146abefef99c851566, type: 3}
+  ErrorSound: {fileID: 8300000, guid: efe9112958e223941b0f6bfc67ae6d43, type: 3}
+  MoneyUpSound: {fileID: 8300000, guid: 6be57f44b1dc89846a195463691eddc2, type: 3}
 --- !u!1 &1629460265
 GameObject:
   m_ObjectHideFlags: 0
@@ -2324,6 +2325,9 @@ MonoBehaviour:
   _sfxSlider: {fileID: 604417580}
   _musicVolumeText: {fileID: 888675782}
   _sfxVolumeText: {fileID: 1272097977}
+  _backButton: {fileID: 0}
+  _optionsPanel: {fileID: 0}
+  _previousPanel: {fileID: 0}
 --- !u!222 &7039281834050729180
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3608,7 +3612,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 321e3883f8ab0a74ebc06f32edf49975, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.25
+  m_Volume: 0.15
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -3719,7 +3723,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.1
+  m_Volume: 0.25
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -3835,7 +3839,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.1
+  m_Volume: 0.25
   m_Pitch: 1
   Loop: 0
   Mute: 0

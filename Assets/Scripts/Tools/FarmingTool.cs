@@ -37,7 +37,7 @@ public class FarmingTool : Tool
         var playerController = player.GetComponent<PlayerController>();
         Transform groundCheck = playerController?.GroundCheck;
         
-        _actions = gameObject.AddComponent<FarmingActions>();
+        _actions = GetComponent<FarmingActions>();
         _actions.Initialize(_attributes);
         
         InitializePreviews(groundCheck);

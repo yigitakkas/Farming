@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 public class MainMenu : MonoBehaviour
 {
@@ -30,9 +31,6 @@ public class MainMenu : MonoBehaviour
         {
             _mainMenuPanel.SetActive(true);
         }
-
-        // Play menu music when starting
-        SoundManager.Instance.PlayMusic(SoundManager.Instance.MainMenuMusic);
 
         // Set up button listeners
         if (_playButton != null)
@@ -75,9 +73,8 @@ public class MainMenu : MonoBehaviour
 
     private void OnPlayButton()
     {
-        // Switch to game music before loading scene
-        SoundManager.Instance.PlayRandomGameMusic();
         SceneManager.LoadScene(1);
+        SoundManager.Instance.PlayRandomGameMusic();
     }
 
     private void OnOptionsButton()

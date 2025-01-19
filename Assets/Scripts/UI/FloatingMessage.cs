@@ -8,6 +8,7 @@ public class FloatingMessage : MonoBehaviour
     [SerializeField] private float _displayTime = 1f;
     [SerializeField] private float _floatSpeed = 1f;
     [SerializeField] private float _fadeSpeed = 1f;
+    [SerializeField] private bool _isErrorMessage = false;  // Flag to identify error messages
     
     private void Start()
     {
@@ -22,10 +23,16 @@ public class FloatingMessage : MonoBehaviour
             return;
         }
         
+        // Play error sound if this is an error message
+        if (_isErrorMessage)
+        {
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.ErrorSound);
+        }
+        
         StartCoroutine(FloatAndFade());
     }
     
-    public void SetMessage(string message)
+    public void SetMessage(string message, bool isError = false)
     {
         if (_textMesh == null)
         {
@@ -33,6 +40,7 @@ public class FloatingMessage : MonoBehaviour
             return;
         }
         _textMesh.text = message;
+        _isErrorMessage = isError;
     }
     
     private IEnumerator FloatAndFade()

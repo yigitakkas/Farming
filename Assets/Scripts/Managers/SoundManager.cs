@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SoundManager : MonoBehaviour
 {
@@ -16,6 +17,10 @@ public class SoundManager : MonoBehaviour
     public AudioClip MainMenuMusic;
     public List<AudioClip> GameMusics;
 
+    [Header("UI Sounds")]
+    public AudioClip ErrorSound;
+    public AudioClip MoneyUpSound;
+
     private bool _isMusicMuted = false;
 
     private int _lastPlayedIndex = -1;
@@ -28,15 +33,22 @@ public class SoundManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            // Load saved volume settings
+            LoadVolumeSettings();
+            
+            // Start main menu music at saved volume
+            if (AudioSource != null && MainMenuMusic != null)
+            {
+                AudioSource.clip = MainMenuMusic;
+                AudioSource.loop = true;
+                AudioSource.Play();
+            }
         }
         else
         {
             Destroy(gameObject);
-            return;
         }
-
-        PlayMusic(MainMenuMusic, true);
-        _originalVolume = AudioSource.volume;
     }
 
     public void PlayMusic(AudioClip musicClip, bool loop = true)
@@ -89,39 +101,50 @@ public class SoundManager : MonoBehaviour
             _lastPlayedIndex = randomIndex;
 
             AudioClip randomMusic = GameMusics[randomIndex];
-            SoundManager.Instance.CrossfadeMusic(randomMusic);
+            CrossfadeMusic(randomMusic);
         }
         else
         {
-            Debug.LogWarning("GameMusics listesi bo� veya atanmad�!");
+            Debug.LogWarning("GameMusics listesi boş veya atanmadı!");
         }
     }
 
     public void CrossfadeMusic(AudioClip newClip, float fadeDuration = 0.5f)
     {
         if (_isMusicMuted) ToggleMusic();
-        StartCoroutine(FadeOutAndIn(newClip, fadeDuration));
+        
+        // Keep current volume throughout the transition
+        float savedVolume = AudioSource.volume;
+        StartCoroutine(FadeOutAndIn(newClip, fadeDuration, savedVolume));
     }
 
-    private IEnumerator FadeOutAndIn(AudioClip newClip, float duration)
+    private IEnumerator FadeOutAndIn(AudioClip newClip, float duration, float savedVolume)
     {
-        float startVolume = AudioSource.volume;
-
-        while (AudioSource.volume > 0)
+        // Fade out while preserving saved volume
+        float timer = 0;
+        while (timer < duration)
         {
-            AudioSource.volume -= startVolume * Time.deltaTime / duration;
+            timer += Time.deltaTime;
+            AudioSource.volume = Mathf.Lerp(savedVolume, 0, timer / duration);
             yield return null;
         }
 
+        // Change clip
         AudioSource.Stop();
         AudioSource.clip = newClip;
         AudioSource.Play();
-
-        while (AudioSource.volume < startVolume)
+        
+        // Fade back to saved volume
+        timer = 0;
+        while (timer < duration)
         {
-            AudioSource.volume += startVolume * Time.deltaTime / duration;
+            timer += Time.deltaTime;
+            AudioSource.volume = Mathf.Lerp(0, savedVolume, timer / duration);
             yield return null;
         }
+        
+        // Ensure we end at exactly the saved volume
+        AudioSource.volume = savedVolume;
     }
 
     private IEnumerator FadeOutMusic(float duration)
@@ -142,11 +165,17 @@ public class SoundManager : MonoBehaviour
         ClickSource.PlayOneShot(ButtonClickSound);
     }
 
-    private void SaveVolumeSettings()
+    public void SetMusicVolume(float volume)
     {
-        PlayerPrefs.SetFloat("MusicVolume", AudioSource.volume);
-        PlayerPrefs.SetFloat("SFXVolume", SfxSource.volume);
-        PlayerPrefs.Save();
+        AudioSource.volume = volume;
+        SaveVolumeSettings();
+    }
+
+    public void SetSFXVolume(float volume)
+    {
+        SfxSource.volume = volume;
+        ClickSource.volume = volume;
+        SaveVolumeSettings();
     }
 
     private void LoadVolumeSettings()
@@ -155,5 +184,12 @@ public class SoundManager : MonoBehaviour
         float sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 1f);
         SfxSource.volume = sfxVolume;
         ClickSource.volume = sfxVolume;
+    }
+
+    private void SaveVolumeSettings()
+    {
+        PlayerPrefs.SetFloat("MusicVolume", AudioSource.volume);
+        PlayerPrefs.SetFloat("SFXVolume", SfxSource.volume);
+        PlayerPrefs.Save();
     }
 }

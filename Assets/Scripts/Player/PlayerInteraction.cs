@@ -212,14 +212,14 @@ public class PlayerInteraction : MonoBehaviour
                 
                 if (!hasPlantingTool)
                 {
-                    ShowErrorMessage("Need planting tool!", hit.point);
+                    ShowFloatingError("Need planting tool!");
                     return;
                 }
                 
                 // Check if we have a seed selected
                 if (InventorySystem.Instance.GetSelectedSeed() == null)
                 {
-                    ShowErrorMessage("Select a seed first!", hit.point);
+                    ShowFloatingError("Select a seed first!");
                     return;
                 }
             }
@@ -269,26 +269,16 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
     
-    private void ShowErrorMessage(string message, Vector3 position)
+    private void ShowFloatingError(string message)
     {
-        if (_errorMessagePrefab == null)
+        if (_errorMessagePrefab != null)
         {
-            Debug.LogError("Error message prefab is not assigned!");
-            return;
-        }
-        
-        GameObject messageObj = Instantiate(_errorMessagePrefab, 
-            position + Vector3.up * 1.5f,
-            Quaternion.identity);
-        
-        FloatingMessage floatingMessage = messageObj.GetComponent<FloatingMessage>();
-        if (floatingMessage != null)
-        {
-            floatingMessage.SetMessage(message);
-        }
-        else
-        {
-            Debug.LogError("FloatingMessage component not found on prefab!");
+            GameObject messageObj = Instantiate(_errorMessagePrefab, transform.position + Vector3.up * 2f, Quaternion.identity);
+            FloatingMessage floatingMessage = messageObj.GetComponent<FloatingMessage>();
+            if (floatingMessage != null)
+            {
+                floatingMessage.SetMessage(message, true);
+            }
         }
     }
     

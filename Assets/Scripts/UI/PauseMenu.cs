@@ -49,18 +49,30 @@ public class PauseMenu : MonoBehaviour
         if (_optionsPanel != null)
             _optionsPanel.SetActive(false);
 
-        // Set up button listeners
+        // Set up button listeners with sound
         if (_resumeButton != null)
-            _resumeButton.onClick.AddListener(ResumeGame);
+            _resumeButton.onClick.AddListener(() => {
+                SoundManager.Instance.ButtonClick();
+                ResumeGame();
+            });
 
         if (_optionsButton != null)
-            _optionsButton.onClick.AddListener(ShowOptions);
+            _optionsButton.onClick.AddListener(() => {
+                SoundManager.Instance.ButtonClick();
+                ShowOptions();
+            });
 
         if (_mainMenuButton != null)
-            _mainMenuButton.onClick.AddListener(ReturnToMainMenu);
+            _mainMenuButton.onClick.AddListener(() => {
+                SoundManager.Instance.ButtonClick();
+                ReturnToMainMenu();
+            });
 
         if (_quitButton != null)
-            _quitButton.onClick.AddListener(QuitGame);
+            _quitButton.onClick.AddListener(() => {
+                SoundManager.Instance.ButtonClick();
+                QuitGame();
+            });
     }
 
     private bool CanPause()
@@ -131,7 +143,7 @@ public class PauseMenu : MonoBehaviour
     {
         _isPaused = false;
         Time.timeScale = 1f;
-        SoundManager.Instance.PlayMusic(SoundManager.Instance.MainMenuMusic);
+        SoundManager.Instance.CrossfadeMusic(SoundManager.Instance.MainMenuMusic);
         SceneManager.LoadScene(0);
     }
 

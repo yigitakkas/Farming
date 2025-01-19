@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class GameManager : MonoBehaviour
     public float PlayerMoney;
     
     public event Action<float> OnMoneyChanged;
-    
+
     private void Awake()
     {
         if (Instance == null)
@@ -43,5 +44,11 @@ public class GameManager : MonoBehaviour
     {
         PlayerMoney += amount;
         OnMoneyChanged?.Invoke(PlayerMoney);
+        
+        // Play money sound when gaining money
+        if (amount > 0)
+        {
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.MoneyUpSound);
+        }
     }
 } 

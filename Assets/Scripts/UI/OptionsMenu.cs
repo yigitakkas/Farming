@@ -51,14 +51,13 @@ public class OptionsMenu : MonoBehaviour
 
     private void OnMusicVolumeChanged(float value)
     {
-        SoundManager.Instance.AudioSource.volume = value;
+        SoundManager.Instance.SetMusicVolume(value);
         UpdateVolumeTexts();
     }
 
     private void OnSFXVolumeChanged(float value)
     {
-        SoundManager.Instance.SfxSource.volume = value;
-        SoundManager.Instance.ClickSource.volume = value;
+        SoundManager.Instance.SetSFXVolume(value);
         UpdateVolumeTexts();
     }
 

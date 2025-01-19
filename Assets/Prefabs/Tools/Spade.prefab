@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8884991149441385854}
   - component: {fileID: 1146577923666906110}
+  - component: {fileID: 5307538899443887335}
   m_Layer: 0
   m_Name: Spade
   m_TagString: Untagged
@@ -69,6 +70,21 @@ MonoBehaviour:
   HarvestPreviewPrefab: {fileID: 5862352020556860747, guid: 77f9e806582d4234bbf28f5b62ef1323, type: 3}
   WateringPreviewPrefab: {fileID: 5862352020556860747, guid: 4de0b9a8790beed499d773563e7f5697, type: 3}
   WaterParticles: {fileID: 0}
+--- !u!114 &5307538899443887335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2305325346606390186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46aeba520aa4b1c489c8b722872aec99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _plantingSoundEffect: {fileID: 8300000, guid: 198954c310ea94042ac45fe504bbca20, type: 3}
+  _harvestingSoundEffect: {fileID: 8300000, guid: feba4d76715427143affec087fe93a60, type: 3}
+  _wateringSoundEffect: {fileID: 8300000, guid: d30b5cc00746ab54b9a602e673b69f73, type: 3}
 --- !u!1 &8144649385779608157
 GameObject:
   m_ObjectHideFlags: 0
