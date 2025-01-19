@@ -40,7 +40,6 @@ public class TutorialManager : MonoBehaviour
 
     private void Start()
     {
-        ResetTutorial();
         if (!PlayerPrefs.HasKey(TUTORIAL_COMPLETED_KEY))
         {
             StartCoroutine(ShowTutorialSequence());

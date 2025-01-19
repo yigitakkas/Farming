@@ -212,19 +212,49 @@ public class TimeManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.buildIndex == 1) // Game scene
+        if (scene.buildIndex == 1)
         {
-            // Reset time state when entering game scene
+            Invoke(nameof(ResetManager), 0.1f);
+
+            CurrentHour = _startHour;
             _currentLightRotation = new Vector3((_startHour - 6) * 15f, -30f, 0f);
             _currentLightIntensity = _defaultLightIntensity;
             _currentSkyboxTint = _defaultSkyTint;
             _currentAtmosphereThickness = _defaultAtmosphereThickness;
 
-            // Make sure game is unpaused when starting
+
+            ApplyLightingImmediately();
+
+
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.ResumeGame();
             }
         }
+    }
+
+    public void ResetManager()
+    {
+        CurrentHour = _startHour;
+        CurrentDay = 1;
+
+        _currentLightRotation = new Vector3((_startHour - 6) * 15f, -30f, 0f);
+        _currentLightIntensity = _defaultLightIntensity;
+        _currentSkyboxTint = _defaultSkyTint;
+        _currentAtmosphereThickness = _defaultAtmosphereThickness;
+
+        ApplyLightingImmediately();
+    }
+
+
+    private void ApplyLightingImmediately()
+    {
+        // Apply directional light settings
+        _directionalLight.transform.rotation = Quaternion.Euler(_currentLightRotation);
+        _directionalLight.intensity = _currentLightIntensity;
+
+        // Apply skybox settings
+        _skyboxMaterial.SetColor("_SkyTint", _currentSkyboxTint);
+        _skyboxMaterial.SetFloat("_AtmosphereThickness", _currentAtmosphereThickness);
     }
 } 
